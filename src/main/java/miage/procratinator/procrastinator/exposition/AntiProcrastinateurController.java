@@ -1,4 +1,4 @@
-package miage.procratinator.procrastinator;
+package miage.procratinator.procrastinator.exposition;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -6,12 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/antiprocrastinateur")
-public class AntiProcrastinateur {
+public class AntiProcrastinateurController {
 
-    @GetMapping("/status")
-    public String getStatus() {
-        return "Anti-procrastinator is active and ready!";
+    @GetMapping("/hello")
+    public String sayHello() {
+        return "Anti-procrastinator here to help!";
     }
+
 }
-
-
