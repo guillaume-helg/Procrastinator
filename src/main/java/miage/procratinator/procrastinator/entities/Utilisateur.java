@@ -12,7 +12,8 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Entity
-
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type")
 public class Utilisateur {
 
     @Id

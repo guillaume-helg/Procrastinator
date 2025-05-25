@@ -1,4 +1,8 @@
 package miage.procratinator.procrastinator.entities;
 
-public class Procrastinateur {
+import jakarta.persistence.Entity;
+
+@Entity
+public class Procrastinateur extends Utilisateur {
+
 }

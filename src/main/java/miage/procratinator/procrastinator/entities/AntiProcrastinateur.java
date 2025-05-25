@@ -1,4 +1,11 @@
 package miage.procratinator.procrastinator.entities;
 
-public class AntiProcrastinateur {
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+public class AntiProcrastinateur extends Utilisateur {
 }
