@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import miage.procratinator.procrastinator.entities.enumeration.Niveau;
+import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastination;
 import miage.procratinator.procrastinator.entities.enumeration.Statut;
 import miage.procratinator.procrastinator.entities.enumeration.Type;
 
@@ -23,7 +23,7 @@ public class PiegeProductivite {
     private String description;
     private Type type;
     private Long idAntiProcrastinateur;
-    private Niveau niveau;
+    private NiveauProcrastination niveauProcrastination;
     @ManyToOne
     @JoinColumn(name = "idRecompense")
     private Recompense recompense;

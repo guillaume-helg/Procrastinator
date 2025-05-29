@@ -1,6 +1,6 @@
 package miage.procratinator.procrastinator.entities.enumeration;
 
-public enum Niveau {
+public enum NiveauProcrastination {
 
     DEBUTANT,
     INTERMEDIAIRE,

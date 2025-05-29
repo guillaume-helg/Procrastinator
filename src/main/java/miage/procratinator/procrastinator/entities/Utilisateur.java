@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import miage.procratinator.procrastinator.entities.enumeration.Niveau;
+import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastination;
+import miage.procratinator.procrastinator.entities.enumeration.Role;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -13,7 +15,6 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "user_type")
 public class Utilisateur {
 
     @Id
@@ -21,11 +22,16 @@ public class Utilisateur {
     private Long idUtilisateur;
     private String pseudo;
     private String mail;
-    private Niveau niveau;
+
+    @Enumerated(EnumType.STRING)
+    private NiveauProcrastination niveauProcrastination;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @ManyToOne
     @JoinColumn(name = "idExcuse")
     private Excuse excusePreferee;
-    private Date dateInscription;
-    private int point;
-
+    private LocalDate dateInscription;
+    private int pointsAccumules;
 }
