@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface TachesAEviterRepository extends CrudRepository<TacheAEviter, Long> {
     List<TacheAEviter> findTacheAEviterByIdTacheAEviter(Long idTacheAEviter);
+
+    List<TacheAEviter> findByIdProcrastinateur(Long idProcrastinateur);
 }

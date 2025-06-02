@@ -18,17 +18,22 @@ public class TacheAEviter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idTacheAEviter;
+
     private Long idProcrastinateur;
+
     private String description;
+
+    @Enumerated(EnumType.STRING)
     private DegresUrgence degresUrgence;
+
     private Date dateLimite;
 
     @OneToOne
     @JoinColumn(name = "idConsequence")
     private Consequence consequence;
+
+    @Enumerated(EnumType.STRING)
     private StatutTache statut;
+
     private Date dateCreation;
-
 }
-
-

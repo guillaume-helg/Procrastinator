@@ -20,9 +20,10 @@ public class AntiProcrastinateurController {
         return "Anti-procrastinator here to help!";
     }
 
-    @PostMapping("/creerPiegeProductivite")
-    public ResponseEntity<PiegeProductivite> creerPiegeProductivite(@RequestBody PiegeProductivite piegeProductivite) {
-        PiegeProductivite saved = antiProcrastinateurService.creerPiegeProductivite(piegeProductivite.getIdPiegeProductivite(), piegeProductivite.getTitre(), piegeProductivite.getDescription());
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
-    }
+    /*@PostMapping("/creerPiegeProductivite")
+    public ResponseEntity<DefiProcrastination> creerPiegeProductivite(@RequestBody PiegeProductivite piegeProductivite) {
+        PiegeProductivite creePiegeProductivite = pie.creerPiegeProductivite(piegeProductivite.getIdPiegeProductivite(), piegeProductivite.getTitre(), piegeProductivite.getDescription());
+        return new ResponseEntity<>(creePiegeProductivite, HttpStatus.CREATED);
+    } */
+
 }

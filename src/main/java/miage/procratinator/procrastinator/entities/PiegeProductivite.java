@@ -30,6 +30,8 @@ public class PiegeProductivite {
     private Date dateCreation;
     private Statut statut;
 
+
+
 }
 
 
