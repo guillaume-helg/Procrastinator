@@ -21,10 +21,7 @@ public class DataInitializer {
                 Utilisateur gestionnaire = new Utilisateur();
                 gestionnaire.setPseudo("Le Grand Gestionnaire");
                 gestionnaire.setMail(email);
-                gestionnaire.setRole(Role.GESTIONNAIRE);
-                gestionnaire.setNiveauProcrastination(NiveauProcrastination.EXPERT);
                 gestionnaire.setDateInscription(LocalDate.now().minusMonths(6));
-                gestionnaire.setPointsAccumules(5000);
                 utilisateurRepository.save(gestionnaire);
                 System.out.println("Gestionnaire initialisé");
             }

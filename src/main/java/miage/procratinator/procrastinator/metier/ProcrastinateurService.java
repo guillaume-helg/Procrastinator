@@ -7,10 +7,12 @@ import miage.procratinator.procrastinator.entities.DefiProcrastination;
 import miage.procratinator.procrastinator.entities.Procrastinateur;
 import miage.procratinator.procrastinator.entities.TacheAEviter;
 import miage.procratinator.procrastinator.entities.enumeration.DegresUrgence;
+import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastination;
 import miage.procratinator.procrastinator.entities.enumeration.StatutTache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -24,13 +26,18 @@ public class ProcrastinateurService {
     @Autowired
     private TachesAEviterRepository tachesAEviterRepository;
 
-    public Procrastinateur createProcrastinateur(Long id) {
-        List<Procrastinateur> procrastinateurs = procrastinateurRepository.findProcrastinateurByIdUtilisateur(id);
+    public Procrastinateur createProcrastinateur(Procrastinateur bodyProcrastinateur) {
+        List<Procrastinateur> procrastinateurs = procrastinateurRepository.findProcrastinateurByIdUtilisateur(bodyProcrastinateur.getIdUtilisateur());
         Procrastinateur procrastinateur;
-
+        LocalDate today = LocalDate.now();
         if (procrastinateurs.isEmpty()) {
             procrastinateur = new Procrastinateur();
-            procrastinateur.setIdUtilisateur(id);
+            procrastinateur.setMail(bodyProcrastinateur.getMail());
+            procrastinateur.setPseudo(bodyProcrastinateur.getPseudo());
+            procrastinateur.setExcusePreferee(bodyProcrastinateur.getExcusePreferee());
+            procrastinateur.setDateInscription(today);
+            procrastinateur.setPointsAccumules(0);
+            procrastinateur.setNiveauProcrastination(NiveauProcrastination.DEBUTANT);
             procrastinateur = procrastinateurRepository.save(procrastinateur);
         } else {
             procrastinateur = procrastinateurs.getFirst();

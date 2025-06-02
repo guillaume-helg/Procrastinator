@@ -17,19 +17,9 @@ public class ProcrastinateurController {
     @Autowired
     private ProcrastinateurService procrastinateurService;
 
-    @GetMapping("/hello")
-    public String sayHello() {
-        return "Procrastinator here to help!";
-    }
-
-    @GetMapping("/inscrire")
-    public String sayInscrire() {
-        return "Procrastinator want to subscribe!";
-    }
-
     @PostMapping("/inscrire")
     public ResponseEntity<Procrastinateur> createProcrastinateur(@RequestBody Procrastinateur procrastinateur) {
-        Procrastinateur savedProcrastinateur = procrastinateurService.createProcrastinateur(procrastinateur.getIdUtilisateur());
+        Procrastinateur savedProcrastinateur = procrastinateurService.createProcrastinateur(procrastinateur);
         return new ResponseEntity<>(savedProcrastinateur, HttpStatus.CREATED);
     }
 

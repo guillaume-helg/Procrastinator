@@ -58,9 +58,6 @@ public class GestionnaireService {
     }
 
     public GrandConcour creerGrandConcour(GrandConcour grandConcour) {
-        if(!utilisateurCourant.estGestionnaire()) {
-            return null;
-        }
 
         List<GrandConcour> grandConcours = grandConcourRepository.findGrandConcourByIdGrandConcour(grandConcour.getIdGrandConcour());
         GrandConcour nouveauGrandConcour;

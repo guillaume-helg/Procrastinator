@@ -23,18 +23,4 @@ public class UtilisateurCourant {
         return getUtilisateurConnecte() != null;
     }
 
-    public boolean estGestionnaire() {
-        Utilisateur u = getUtilisateurConnecte();
-        return u != null && u.getRole() == Role.GESTIONNAIRE;
-    }
-
-    public boolean estProcrastinateur() {
-        Utilisateur u = getUtilisateurConnecte();
-        return u != null && u.getRole() == Role.PROCRASTINATEUR;
-    }
-
-    public boolean estAntiProcrastinateur() {
-        Utilisateur u = getUtilisateurConnecte();
-        return u != null && u.getRole() == Role.ANTI_PROCRASTINATEUR;
-    }
 }

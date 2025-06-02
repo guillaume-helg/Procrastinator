@@ -54,7 +54,6 @@ public class UtilisateurService {
     public Utilisateur update(Long id, Utilisateur updated) {
         return utilisateurRepository.findById(id).map(u -> {
             u.setPseudo(updated.getPseudo());
-            u.setExcusePreferee(updated.getExcusePreferee());
             return utilisateurRepository.save(u);
         }).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
     }
