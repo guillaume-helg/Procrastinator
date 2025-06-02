@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface UtilisateurRepository extends CrudRepository<Utilisateur, Long> {
     List<Utilisateur> findUtilisateurByMail(String mail);
-    List<Utilisateur> findUtilisateurByRole(Role role);
     List<Utilisateur> findAll();
 }

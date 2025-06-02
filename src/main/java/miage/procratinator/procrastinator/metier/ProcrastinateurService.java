@@ -30,7 +30,6 @@ public class ProcrastinateurService {
 
         if (procrastinateurs.isEmpty()) {
             procrastinateur = new Procrastinateur();
-            procrastinateur.setIdUtilisateur(id);
             procrastinateur = procrastinateurRepository.save(procrastinateur);
         } else {
             procrastinateur = procrastinateurs.getFirst();

@@ -14,7 +14,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Utilisateur {
 
     @Id
@@ -22,16 +22,5 @@ public class Utilisateur {
     private Long idUtilisateur;
     private String pseudo;
     private String mail;
-
-    @Enumerated(EnumType.STRING)
-    private NiveauProcrastination niveauProcrastination;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    @ManyToOne
-    @JoinColumn(name = "idExcuse")
-    private Excuse excusePreferee;
     private LocalDate dateInscription;
-    private int pointsAccumules;
 }

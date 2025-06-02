@@ -1,28 +1,27 @@
 package miage.procratinator.procrastinator.entities;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastination;
+import miage.procratinator.procrastinator.entities.enumeration.Role;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+@Getter
+@Setter
 @Entity
 public class Procrastinateur extends Utilisateur {
 
-    /*
-    @OneToMany(mappedBy = "procrastinateur", cascade = CascadeType.ALL)
-    private List<TacheAEviter> taches = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private NiveauProcrastination niveauProcrastination;
 
-    @OneToMany(mappedBy = "procrastinateur", cascade = CascadeType.ALL)
-    private List<Confrontation> confrontations = new ArrayList<>();
+    private int pointsAccumules;
 
-    @OneToMany(mappedBy = "auteur", cascade = CascadeType.ALL)
-    private List<Excuse> excusesSoumises = new ArrayList<>();
-
-    @OneToMany(mappedBy = "procrastinateur", cascade = CascadeType.ALL)
-    private List<ParticipationDefi> participations = new ArrayList<>();
-     */
+    @ManyToOne
+    @JoinColumn(name = "idExcuse")
+    private Excuse excusePreferee;
 }
 
