@@ -36,9 +36,9 @@ public class ProcrastinateurController {
         return new ResponseEntity<>(creeTacheAEviter, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{idProcrastinateur}/taches")
-    public ResponseEntity<List<TacheAEviter>> getTachesByProcrastinateur(@PathVariable Long idProcrastinateur) {
-        List<TacheAEviter> taches = procrastinateurService.getTachesByProcrastinateurId(idProcrastinateur);
+    @GetMapping("/taches")
+    public ResponseEntity<List<TacheAEviter>> getTachesByProcrastinateur() {
+        List<TacheAEviter> taches = procrastinateurService.getTachesByProcrastinateurId();
         return new ResponseEntity<>(taches, HttpStatus.OK);
     }
 

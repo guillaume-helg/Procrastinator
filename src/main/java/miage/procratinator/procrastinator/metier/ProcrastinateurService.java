@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpSession;
 import miage.procratinator.procrastinator.dao.ProcrastinateurRepository;
 import miage.procratinator.procrastinator.dao.TachesAEviterRepository;
 import miage.procratinator.procrastinator.entities.*;
-import miage.procratinator.procrastinator.entities.enumeration.DegresUrgence;
 import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastination;
 import miage.procratinator.procrastinator.entities.enumeration.StatutTache;
+import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +25,9 @@ public class ProcrastinateurService {
 
     @Autowired
     private TachesAEviterRepository tachesAEviterRepository;
+
+    @Autowired
+    private UtilisateurCourant utilisateurCourant;
 
 
     /**
@@ -86,16 +89,16 @@ public class ProcrastinateurService {
      * @return la tâche existante ou la nouvelle tâche créée
      */
     public TacheAEviter creerTacheAEviter(TacheAEviter bodyTacheAEviter) {
-        List<TacheAEviter> tacheAEviters = tachesAEviterRepository.findTacheAEviterByIdTacheAEviter(bodyTacheAEviter.getIdTacheAEviter());
+        List<TacheAEviter> tacheAEviters = tachesAEviterRepository.findTacheAEviterByDescription(bodyTacheAEviter.getDescription());
         TacheAEviter tacheAEviter;
 
         if (tacheAEviters.isEmpty()) {
             tacheAEviter = new TacheAEviter();
             tacheAEviter.setDescription(bodyTacheAEviter.getDescription());
-            tacheAEviter.setIdProcrastinateur(bodyTacheAEviter.getIdProcrastinateur());
+            tacheAEviter.setIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
             tacheAEviter.setDegresUrgence(bodyTacheAEviter.getDegresUrgence());
             tacheAEviter.setConsequence(bodyTacheAEviter.getConsequence());
-            tacheAEviter.setDateCreation(new Date());
+            tacheAEviter.setDateCreation(bodyTacheAEviter.getDateCreation());
             tacheAEviter.setStatut(StatutTache.EN_ATTENTE);
             tacheAEviter = tachesAEviterRepository.save(tacheAEviter);
         } else {
@@ -104,9 +107,7 @@ public class ProcrastinateurService {
         return tacheAEviter;
     }
 
-
-    public List<TacheAEviter> getTachesByProcrastinateurId(Long idProcrastinateur) {
-        return tachesAEviterRepository.findByIdProcrastinateur(idProcrastinateur);
+    public List<TacheAEviter> getTachesByProcrastinateurId() {
+        return tachesAEviterRepository.findTacheAEviterByIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
     }
-
 }
