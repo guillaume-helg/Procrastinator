@@ -2,11 +2,10 @@ package miage.procratinator.procrastinator.metier;
 
 import miage.procratinator.procrastinator.dao.AntiProcrastinateurRepository;
 import miage.procratinator.procrastinator.dao.DefiProcrastinationRepository;
-import miage.procratinator.procrastinator.dao.GrandConcourRepository;
+import miage.procratinator.procrastinator.dao.GrandConcoursRepository;
 import miage.procratinator.procrastinator.entities.AntiProcrastinateur;
 import miage.procratinator.procrastinator.entities.DefiProcrastination;
-import miage.procratinator.procrastinator.entities.GrandConcour;
-import miage.procratinator.procrastinator.entities.Procrastinateur;
+import miage.procratinator.procrastinator.entities.GrandConcours;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ public class GestionnaireService {
     private DefiProcrastinationRepository defiProcrastinationRepository;
 
     @Autowired
-    private GrandConcourRepository grandConcourRepository;
+    private GrandConcoursRepository grandConcoursRepository;
 
     @Autowired
     private UtilisateurCourant utilisateurCourant;
@@ -57,21 +56,21 @@ public class GestionnaireService {
         return defiProcrastination;
     }
 
-    public GrandConcour creerGrandConcour(GrandConcour grandConcour) {
+    public GrandConcours creerGrandConcour(GrandConcours grandConcour) {
 
-        List<GrandConcour> grandConcours = grandConcourRepository.findGrandConcourByIdGrandConcour(grandConcour.getIdGrandConcour());
-        GrandConcour nouveauGrandConcour;
+        List<GrandConcours> grandConcours = grandConcoursRepository.findGrandConcourByIdGrandConcour(grandConcour.getIdGrandConcour());
+        GrandConcours nouveauGrandConcours;
 
         if (grandConcours.isEmpty()) {
-            nouveauGrandConcour = new GrandConcour();
-            nouveauGrandConcour.setNom(grandConcour.getNom());
-            nouveauGrandConcour.setRecompense(grandConcour.getRecompense());
-            nouveauGrandConcour.setDateDebut(grandConcour.getDateDebut());
-            nouveauGrandConcour.setDateFin(grandConcour.getDateFin());
-            nouveauGrandConcour = grandConcourRepository.save(nouveauGrandConcour);
+            nouveauGrandConcours = new GrandConcours();
+            nouveauGrandConcours.setNom(grandConcour.getNom());
+            nouveauGrandConcours.setRecompense(grandConcour.getRecompense());
+            nouveauGrandConcours.setDateDebut(grandConcour.getDateDebut());
+            nouveauGrandConcours.setDateFin(grandConcour.getDateFin());
+            nouveauGrandConcours = grandConcoursRepository.save(nouveauGrandConcours);
         } else {
-            nouveauGrandConcour = grandConcours.getFirst();
+            nouveauGrandConcours = grandConcours.getFirst();
         }
-        return nouveauGrandConcour;
+        return nouveauGrandConcours;
     }
 }

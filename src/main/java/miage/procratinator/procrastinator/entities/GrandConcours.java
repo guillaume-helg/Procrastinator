@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
-public class GrandConcour {
+public class GrandConcours {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idGrandConcour;

@@ -15,15 +15,17 @@ public class AntiProcrastinateurController {
     @Autowired
     AntiprocrastinateurService antiProcrastinateurService;
 
-    @GetMapping("/hello")
-    public String sayHello() {
-        return "Anti-procrastinator here to help!";
-    }
-
-    /*@PostMapping("/creerPiegeProductivite")
-    public ResponseEntity<DefiProcrastination> creerPiegeProductivite(@RequestBody PiegeProductivite piegeProductivite) {
-        PiegeProductivite creePiegeProductivite = pie.creerPiegeProductivite(piegeProductivite.getIdPiegeProductivite(), piegeProductivite.getTitre(), piegeProductivite.getDescription());
+    /**
+     * Crée un nouveau piège de productivité
+     * Reçoit les infos du piège dans la requête et le crée avec le service
+     * Retourne le piège créé avec le code 201 (CREATED)
+     *
+     * @param piegeProductivite le piège à créer
+     * @return le piège créé
+     */
+    @PostMapping("/creerPiegeProductivite")
+    public ResponseEntity<?> creerPiegeProductivite(@RequestBody PiegeProductivite piegeProductivite) {
+        PiegeProductivite creePiegeProductivite = antiProcrastinateurService.creerPiegeProductivite(piegeProductivite.getIdPiegeProductivite(), piegeProductivite.getTitre(), piegeProductivite.getDescription());
         return new ResponseEntity<>(creePiegeProductivite, HttpStatus.CREATED);
-    } */
-
+    }
 }

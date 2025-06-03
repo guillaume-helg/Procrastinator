@@ -1,5 +1,6 @@
 package miage.procratinator.procrastinator.exposition;
 
+import jakarta.servlet.http.HttpSession;
 import miage.procratinator.procrastinator.entities.Procrastinateur;
 import miage.procratinator.procrastinator.entities.TacheAEviter;
 import miage.procratinator.procrastinator.metier.ProcrastinateurService;
@@ -17,31 +18,26 @@ public class ProcrastinateurController {
     @Autowired
     private ProcrastinateurService procrastinateurService;
 
-    @GetMapping("/hello")
-    public String sayHello() {
-        return "Procrastinator here to help!";
-    }
-
-    @GetMapping("/inscrire")
-    public String sayInscrire() {
-        return "Procrastinator want to subscribe!";
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestParam String email, HttpSession session) {
+        return procrastinateurService.loginProcrastinateur(email, session);
     }
 
     @PostMapping("/inscrire")
     public ResponseEntity<Procrastinateur> createProcrastinateur(@RequestBody Procrastinateur procrastinateur) {
-        Procrastinateur savedProcrastinateur = procrastinateurService.createProcrastinateur(procrastinateur.getIdUtilisateur());
+        Procrastinateur savedProcrastinateur = procrastinateurService.createProcrastinateur(procrastinateur);
         return new ResponseEntity<>(savedProcrastinateur, HttpStatus.CREATED);
     }
 
     @PostMapping("/ajouterTache")
     public ResponseEntity<TacheAEviter> creerTacheAEviter(@RequestBody TacheAEviter tacheAEviter) {
-        TacheAEviter creeTacheAEviter = procrastinateurService.creerTacheAEviter(tacheAEviter.getIdTacheAEviter(), tacheAEviter.getIdProcrastinateur(), tacheAEviter.getDegresUrgence(), tacheAEviter.getConsequence());
+        TacheAEviter creeTacheAEviter = procrastinateurService.creerTacheAEviter(tacheAEviter);
         return new ResponseEntity<>(creeTacheAEviter, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{idProcrastinateur}/taches")
-    public ResponseEntity<List<TacheAEviter>> getTachesByProcrastinateur(@PathVariable Long idProcrastinateur) {
-        List<TacheAEviter> taches = procrastinateurService.getTachesByProcrastinateurId(idProcrastinateur);
+    @GetMapping("/taches")
+    public ResponseEntity<List<TacheAEviter>> getTachesByProcrastinateur() {
+        List<TacheAEviter> taches = procrastinateurService.getTachesByProcrastinateurId();
         return new ResponseEntity<>(taches, HttpStatus.OK);
     }
 
