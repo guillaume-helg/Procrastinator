@@ -6,7 +6,6 @@ import miage.procratinator.procrastinator.dao.GrandConcourRepository;
 import miage.procratinator.procrastinator.entities.AntiProcrastinateur;
 import miage.procratinator.procrastinator.entities.DefiProcrastination;
 import miage.procratinator.procrastinator.entities.GrandConcour;
-import miage.procratinator.procrastinator.entities.Procrastinateur;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

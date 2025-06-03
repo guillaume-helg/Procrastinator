@@ -23,7 +23,7 @@ public class DataInitializer {
                 gestionnaire.setMail(email);
                 gestionnaire.setDateInscription(LocalDate.now().minusMonths(6));
                 utilisateurRepository.save(gestionnaire);
-                System.out.println("Gestionnaire initialisé");
+                System.out.println("Creation du Big Boss");
             }
         };
     }
