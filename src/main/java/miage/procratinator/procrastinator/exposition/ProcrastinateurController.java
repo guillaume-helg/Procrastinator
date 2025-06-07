@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import miage.procratinator.procrastinator.entities.Procrastinateur;
 import miage.procratinator.procrastinator.entities.TacheAEviter;
 import miage.procratinator.procrastinator.entities.Utilisateur;
+import miage.procratinator.procrastinator.entities.enumeration.StatutTache;
 import miage.procratinator.procrastinator.metier.ProcrastinateurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,13 @@ public class ProcrastinateurController {
     public ResponseEntity<List<TacheAEviter>> getTachesByProcrastinateur() {
         List<TacheAEviter> taches = procrastinateurService.getTachesByProcrastinateurId();
         return new ResponseEntity<>(taches, HttpStatus.OK);
+    }
+
+    @PostMapping("/updateTache")
+    public ResponseEntity<?> updateStatutTache(@RequestBody TacheAEviter tacheAEviter) {
+        //StatutTache statut = procrastinateurService.updateStatutTache(tacheAEviter);
+        //return new ResponseEntity<>(statut, HttpStatus.OK);
+        return procrastinateurService.updateStatutTache(tacheAEviter);
     }
 
     public void participerDefiProcrastination() {

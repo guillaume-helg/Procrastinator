@@ -7,6 +7,7 @@ import lombok.Setter;
 import miage.procratinator.procrastinator.entities.enumeration.DegresUrgence;
 import miage.procratinator.procrastinator.entities.enumeration.StatutTache;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -26,14 +27,18 @@ public class TacheAEviter {
     @Enumerated(EnumType.STRING)
     private DegresUrgence degresUrgence;
 
-    private Date dateLimite;
+    private LocalDate dateLimite;
 
+    /*
     @OneToOne
     @JoinColumn(name = "idConsequence")
     private Consequence consequence;
+     */
+
+    private String consequence;
 
     @Enumerated(EnumType.STRING)
     private StatutTache statut;
 
-    private Date dateCreation;
+    private LocalDate dateCreation;
 }

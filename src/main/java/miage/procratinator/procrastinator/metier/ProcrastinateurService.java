@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -92,19 +93,82 @@ public class ProcrastinateurService {
         List<TacheAEviter> tacheAEviters = tachesAEviterRepository.findTacheAEviterByDescription(bodyTacheAEviter.getDescription());
         TacheAEviter tacheAEviter;
 
+        LocalDate today = LocalDate.now();
+
         if (tacheAEviters.isEmpty()) {
             tacheAEviter = new TacheAEviter();
             tacheAEviter.setDescription(bodyTacheAEviter.getDescription());
             tacheAEviter.setIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
             tacheAEviter.setDegresUrgence(bodyTacheAEviter.getDegresUrgence());
+            tacheAEviter.setDateLimite(bodyTacheAEviter.getDateLimite());
             tacheAEviter.setConsequence(bodyTacheAEviter.getConsequence());
-            tacheAEviter.setDateCreation(bodyTacheAEviter.getDateCreation());
+            //tacheAEviter.setDateCreation(bodyTacheAEviter.getDateCreation());
+            tacheAEviter.setDateCreation(today);
+
             tacheAEviter.setStatut(StatutTache.EN_ATTENTE);
             tacheAEviter = tachesAEviterRepository.save(tacheAEviter);
         } else {
             tacheAEviter = tacheAEviters.getFirst();
         }
         return tacheAEviter;
+    }
+
+    public ResponseEntity<?> updateStatutTache(TacheAEviter bodyTacheAEviter) {
+        List<TacheAEviter> tacheAEviters = tachesAEviterRepository.findTacheAEviterByDescription(bodyTacheAEviter.getDescription());
+        StatutTache nouveauStatut = bodyTacheAEviter.getStatut();
+        TacheAEviter tacheAEviter = tacheAEviters.getFirst();
+
+        if (tacheAEviters.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tache inconnu");
+        } else if (nouveauStatut == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Une tâche ne peut être nulle");
+        } else if (nouveauStatut.equals(StatutTache.EVITEE_AVEC_SUCCES)) {
+            return tacheEviteeAvecSucces(tacheAEviter);
+        }
+
+        tacheAEviter.setStatut(nouveauStatut);
+        tacheAEviter = tachesAEviterRepository.save(tacheAEviter);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Tâche modifiée !");
+    }
+
+    public ResponseEntity<?> tacheEviteeAvecSucces(TacheAEviter tacheAEviter) {
+        List<Procrastinateur> procrastinateurs = procrastinateurRepository.findProcrastinateurByMail(utilisateurCourant.getUtilisateurConnecte().getMail());
+        Procrastinateur procrastinateur = procrastinateurs.getFirst();
+        int pointsGagnes = this.calculTacheEvitee(tacheAEviter);
+        procrastinateur.setPointsAccumules(procrastinateur.getPointsAccumules() + pointsGagnes);
+        procrastinateurRepository.save(procrastinateur);
+
+        String passageNiveau = (this.checkNiveauProcrastinateur(procrastinateur) != null)
+                ? "\nLe procrastinateur vient d'être promu " + procrastinateur.getNiveauProcrastination() + " !"
+                : "";
+
+        return ResponseEntity.status(HttpStatus.OK).body("Tâche evitée avec succès ! + " + pointsGagnes + " points !" + passageNiveau);
+    }
+
+    public int calculTacheEvitee(TacheAEviter tache) {
+        int pointsDegreUrgence = tache.getDegresUrgence().getValeur() * 10;
+        int pointsJoursDeRetard = 0;
+
+        if (LocalDate.now().isAfter(tache.getDateLimite())) {
+            int joursDeRetard = (int) ChronoUnit.DAYS.between(tache.getDateLimite(), LocalDate.now());
+            pointsJoursDeRetard = joursDeRetard * 5;
+        }
+        return Math.min(pointsDegreUrgence + pointsJoursDeRetard, 200);
+
+    }
+
+    public NiveauProcrastination checkNiveauProcrastinateur(Procrastinateur procrastinateur) {
+        if ( procrastinateur.getPointsAccumules() >= NiveauProcrastination.INTERMEDIAIRE.getPointsRequis() && procrastinateur.getNiveauProcrastination() != NiveauProcrastination.INTERMEDIAIRE ) {
+            procrastinateur.setNiveauProcrastination(NiveauProcrastination.INTERMEDIAIRE);
+            procrastinateurRepository.save(procrastinateur);
+            return procrastinateur.getNiveauProcrastination();
+        } else if (procrastinateur.getPointsAccumules() >= NiveauProcrastination.EXPERT.getPointsRequis() && procrastinateur.getNiveauProcrastination() != NiveauProcrastination.EXPERT) {
+            procrastinateur.setNiveauProcrastination(NiveauProcrastination.EXPERT);
+            procrastinateurRepository.save(procrastinateur);
+            return procrastinateur.getNiveauProcrastination();
+        }
+        return null;
     }
 
     public List<TacheAEviter> getTachesByProcrastinateurId() {
