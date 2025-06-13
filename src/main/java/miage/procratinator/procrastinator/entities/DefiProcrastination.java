@@ -16,7 +16,6 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Entity
-
 public class DefiProcrastination {
 
     @Id
@@ -24,12 +23,11 @@ public class DefiProcrastination {
     private Long idDefiProcrastination;
     private String titre;
     private String description;
-    private Float durée;
+    private Float duree;
     private Difficulte difficulte;
     private int pointsAGagner;
     private Long idAntiProcrastinateur;
     private Date dateDebut;
     private Date dateFin;
     private Statut statut;
-
 }

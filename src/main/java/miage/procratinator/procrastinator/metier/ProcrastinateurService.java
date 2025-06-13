@@ -5,6 +5,7 @@ import miage.procratinator.procrastinator.dao.ProcrastinateurRepository;
 import miage.procratinator.procrastinator.dao.TachesAEviterRepository;
 import miage.procratinator.procrastinator.entities.*;
 import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastination;
+import miage.procratinator.procrastinator.entities.enumeration.NiveauRecompense;
 import miage.procratinator.procrastinator.entities.enumeration.StatutTache;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
@@ -169,6 +171,16 @@ public class ProcrastinateurService {
             return procrastinateur.getNiveauProcrastination();
         }
         return null;
+    }
+
+    public boolean checkAttributionRecompense(Procrastinateur procrastinateur, NiveauRecompense niveau) {
+        LocalDate dateInscription = procrastinateur.getDateInscription();
+
+        int moisAnciennete = Period.between(dateInscription, LocalDate.now()).getMonths()
+                + 12 * Period.between(dateInscription, LocalDate.now()).getYears();
+        int pointsExperience = procrastinateur.getPointsAccumules();
+
+        return moisAnciennete >= niveau.getNombreDeMois() && pointsExperience >= niveau.getPointsAttribues();
     }
 
     public List<TacheAEviter> getTachesByProcrastinateurId() {

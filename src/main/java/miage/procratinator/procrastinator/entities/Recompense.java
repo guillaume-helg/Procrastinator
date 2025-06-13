@@ -25,7 +25,6 @@ public class Recompense {
     private String conditionObtention;
     private NiveauRecompense niveauRecompense;
     private TypeRecompense typeRecompense;
-
 }
 
 

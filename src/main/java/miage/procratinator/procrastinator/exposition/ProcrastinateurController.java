@@ -45,8 +45,6 @@ public class ProcrastinateurController {
 
     @PostMapping("/updateTache")
     public ResponseEntity<?> updateStatutTache(@RequestBody TacheAEviter tacheAEviter) {
-        //StatutTache statut = procrastinateurService.updateStatutTache(tacheAEviter);
-        //return new ResponseEntity<>(statut, HttpStatus.OK);
         return procrastinateurService.updateStatutTache(tacheAEviter);
     }
 

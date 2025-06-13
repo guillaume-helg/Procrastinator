@@ -44,7 +44,7 @@ public class GestionnaireController {
      */
     @PostMapping("/creer-defi")
     public ResponseEntity<DefiProcrastination> creerDefiProcrastination(@RequestBody DefiProcrastination defiProcrastination) {
-        DefiProcrastination creeDefiProcrastination = gestionnaireService.creerDefiProcrastinateur(defiProcrastination.getIdDefiProcrastination(), defiProcrastination.getTitre());
+        DefiProcrastination creeDefiProcrastination = gestionnaireService.creerDefiProcrastinateur(defiProcrastination);
         return new ResponseEntity<>(creeDefiProcrastination, HttpStatus.CREATED);
     }
 
