@@ -1,6 +1,5 @@
 package miage.procratinator.procrastinator.dao;
 
-import miage.procratinator.procrastinator.entities.DefiProcrastination;
 import miage.procratinator.procrastinator.entities.PiegeProductivite;
 import org.springframework.data.repository.CrudRepository;
 

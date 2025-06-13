@@ -4,11 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastination;
-import miage.procratinator.procrastinator.entities.enumeration.Role;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -18,7 +15,7 @@ import java.util.Date;
 public class Utilisateur {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUtilisateur;
     private String pseudo;
     private String mail;

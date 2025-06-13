@@ -2,7 +2,6 @@ package miage.procratinator.procrastinator.metier;
 
 import miage.procratinator.procrastinator.dao.PiegeProductiviteRepository;
 import miage.procratinator.procrastinator.entities.PiegeProductivite;
-import miage.procratinator.procrastinator.entities.PiegeProductivite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

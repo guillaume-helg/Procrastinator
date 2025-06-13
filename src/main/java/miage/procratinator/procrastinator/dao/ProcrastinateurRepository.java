@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface ProcrastinateurRepository extends CrudRepository<Procrastinateur, Long> {
     List<Procrastinateur> findProcrastinateurByMail(String email);
+
     List<Procrastinateur> findProcrastinateurByPseudo(String pseudo);
 }

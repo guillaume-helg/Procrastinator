@@ -3,8 +3,6 @@ package miage.procratinator.procrastinator.exposition;
 import jakarta.servlet.http.HttpSession;
 import miage.procratinator.procrastinator.entities.Procrastinateur;
 import miage.procratinator.procrastinator.entities.TacheAEviter;
-import miage.procratinator.procrastinator.entities.Utilisateur;
-import miage.procratinator.procrastinator.entities.enumeration.StatutTache;
 import miage.procratinator.procrastinator.metier.ProcrastinateurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

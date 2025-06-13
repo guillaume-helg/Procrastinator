@@ -5,7 +5,10 @@ import miage.procratinator.procrastinator.dao.DefiProcrastinationRepository;
 import miage.procratinator.procrastinator.dao.ParticipationDefiRepository;
 import miage.procratinator.procrastinator.dao.ProcrastinateurRepository;
 import miage.procratinator.procrastinator.dao.TachesAEviterRepository;
-import miage.procratinator.procrastinator.entities.*;
+import miage.procratinator.procrastinator.entities.DefiProcrastination;
+import miage.procratinator.procrastinator.entities.ParticipationDefi;
+import miage.procratinator.procrastinator.entities.Procrastinateur;
+import miage.procratinator.procrastinator.entities.TacheAEviter;
 import miage.procratinator.procrastinator.entities.enumeration.*;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 
 
@@ -28,16 +30,15 @@ public class ProcrastinateurService {
 
     @Autowired
     private TachesAEviterRepository tachesAEviterRepository;
-    
+
     @Autowired
     private DefiProcrastinationRepository defiProcrastinationRepository;
-    
+
     @Autowired
     private ParticipationDefiRepository participationDefiRepository;
 
     @Autowired
     private UtilisateurCourant utilisateurCourant;
-
 
     /**
      * Connecte un utilisateur avec son adresse email
@@ -84,7 +85,7 @@ public class ProcrastinateurService {
             procrastinateur.setNiveauProcrastination(NiveauProcrastination.DEBUTANT);
             procrastinateur = procrastinateurRepository.save(procrastinateur);
         } else {
-            procrastinateur =  procrastinateurs.getFirst();
+            procrastinateur = procrastinateurs.getFirst();
         }
         return procrastinateur;
     }
@@ -121,6 +122,10 @@ public class ProcrastinateurService {
         return tacheAEviter;
     }
 
+    /**
+     * @param bodyTacheAEviter
+     * @return
+     */
     public ResponseEntity<?> updateStatutTache(TacheAEviter bodyTacheAEviter) {
         List<TacheAEviter> tacheAEviters = tachesAEviterRepository.findTacheAEviterByDescription(bodyTacheAEviter.getDescription());
         StatutTache nouveauStatut = bodyTacheAEviter.getStatut();
@@ -140,6 +145,10 @@ public class ProcrastinateurService {
         return ResponseEntity.status(HttpStatus.OK).body("Tâche modifiée !");
     }
 
+    /**
+     * @param tacheAEviter
+     * @return
+     */
     public ResponseEntity<?> tacheEviteeAvecSucces(TacheAEviter tacheAEviter) {
         List<Procrastinateur> procrastinateurs = procrastinateurRepository.findProcrastinateurByMail(utilisateurCourant.getUtilisateurConnecte().getMail());
         Procrastinateur procrastinateur = procrastinateurs.getFirst();
@@ -163,11 +172,10 @@ public class ProcrastinateurService {
             pointsJoursDeRetard = joursDeRetard * 5;
         }
         return Math.min(pointsDegreUrgence + pointsJoursDeRetard, 200);
-
     }
 
     public NiveauProcrastination checkNiveauProcrastinateur(Procrastinateur procrastinateur) {
-        if ( procrastinateur.getPointsAccumules() >= NiveauProcrastination.INTERMEDIAIRE.getPointsRequis() && procrastinateur.getNiveauProcrastination() != NiveauProcrastination.INTERMEDIAIRE ) {
+        if (procrastinateur.getPointsAccumules() >= NiveauProcrastination.INTERMEDIAIRE.getPointsRequis() && procrastinateur.getNiveauProcrastination() != NiveauProcrastination.INTERMEDIAIRE) {
             procrastinateur.setNiveauProcrastination(NiveauProcrastination.INTERMEDIAIRE);
             procrastinateurRepository.save(procrastinateur);
             return procrastinateur.getNiveauProcrastination();
@@ -194,9 +202,9 @@ public class ProcrastinateurService {
     }
 
     public ResponseEntity<?> participerDefi(Long idDefi) {
-    DefiProcrastination defi = defiProcrastinationRepository.findById(idDefi)
-            .orElseThrow();
-            
+        DefiProcrastination defi = defiProcrastinationRepository.findById(idDefi)
+                .orElseThrow();
+
         if (utilisateurCourant == null || utilisateurCourant.getUtilisateurConnecte() == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur non connecté");
         }

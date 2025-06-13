@@ -3,7 +3,6 @@ package miage.procratinator.procrastinator.metier;
 import miage.procratinator.procrastinator.dao.AntiProcrastinateurRepository;
 import miage.procratinator.procrastinator.dao.DefiProcrastinationRepository;
 import miage.procratinator.procrastinator.dao.GrandConcoursRepository;
-import miage.procratinator.procrastinator.dao.ProcrastinateurRepository;
 import miage.procratinator.procrastinator.entities.AntiProcrastinateur;
 import miage.procratinator.procrastinator.entities.DefiProcrastination;
 import miage.procratinator.procrastinator.entities.GrandConcours;
@@ -12,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static miage.procratinator.procrastinator.utilities.Utilitaires.calculerDifferenceEntreDate;
@@ -31,33 +31,30 @@ public class GestionnaireService {
     @Autowired
     private UtilisateurCourant utilisateurCourant;
 
-    @Autowired
-    private ProcrastinateurRepository procrastinateurRepository;
-
     /**
      * Crée ou récupère un utilisateur AntiProcrastinateur basé sur le pseudo fourni.
      * Cette méthode implémente un pattern "trouver ou créer" pour gérer les entités AntiProcrastinateur.
      *
-     * @param pseudo Le nom d'utilisateur/pseudo de l'AntiProcrastinateur à créer ou récupérer
      * @return AntiProcrastinateur L'entité AntiProcrastinateur existante ou nouvellement créée
-     *
+     * <p>
      * La méthode suit la logique suivante :
      * 1. Vérifie d'abord si un AntiProcrastinateur avec le pseudo donné existe déjà
      * 2. Si aucun n'existe, en crée un nouveau avec le pseudo fourni
      * 3. Si un existe déjà, retourne l'instance existante (prend le premier si plusieurs existent)
      */
-    public AntiProcrastinateur creerAntiProcrastinateur(String pseudo) {
-        List<AntiProcrastinateur> clients = antiProcrastinateurRepository.findByPseudo(pseudo);
-        AntiProcrastinateur antiProcrastinateur;
+    public AntiProcrastinateur creerAntiProcrastinateur(AntiProcrastinateur antiProcrastinateur) {
+        List<AntiProcrastinateur> clients = antiProcrastinateurRepository.findByPseudo(antiProcrastinateur.getPseudo());
+        AntiProcrastinateur newAntiProcrastinateur;
 
         if (clients.isEmpty()) {
-            antiProcrastinateur = new AntiProcrastinateur();
-            antiProcrastinateur.setPseudo(pseudo);
-            antiProcrastinateur = antiProcrastinateurRepository.save(antiProcrastinateur);
+            newAntiProcrastinateur = new AntiProcrastinateur();
+            antiProcrastinateur.setDateInscription(LocalDate.now());
+            BeanUtils.copyProperties(antiProcrastinateur, newAntiProcrastinateur); // Classe de Spring qui fait plaisir
+            newAntiProcrastinateur = antiProcrastinateurRepository.save(newAntiProcrastinateur);
         } else {
-            antiProcrastinateur = clients.getFirst();
+            newAntiProcrastinateur = clients.getFirst();
         }
-        return antiProcrastinateur;
+        return newAntiProcrastinateur;
     }
 
     /**
@@ -66,8 +63,9 @@ public class GestionnaireService {
      * - Recherche un défi existant avec l'ID fourni
      * - Si aucun défi n'existe, en crée un nouveau avec les propriétés du défi fourni
      * - Si un défi existe déjà, retourne l'instance existante
+     *
      * @param defiProcrastination L'entité contenant les informations du défi à créer ou récupérer
-     *                           (ID, titre, description, durée, difficulté, points, dates, etc.)
+     *                            (ID, titre, description, durée, difficulté, points, dates, etc.)
      * @return DefiProcrastination L'entité DefiProcrastination existante ou nouvellement créée
      */
     public DefiProcrastination creerDefiProcrastinateur(DefiProcrastination defiProcrastination) {
@@ -76,9 +74,9 @@ public class GestionnaireService {
 
         defiProcrastination.setIdGestionnaire(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
         defiProcrastination.setDuree(
-            (float) calculerDifferenceEntreDate(
-                    defiProcrastination.getDateDebut(),
-                    defiProcrastination.getDateFin()).getDays()
+                (float) calculerDifferenceEntreDate(
+                        defiProcrastination.getDateDebut(),
+                        defiProcrastination.getDateFin()).getDays()
         );
 
         if (existingDefis.isEmpty()) {

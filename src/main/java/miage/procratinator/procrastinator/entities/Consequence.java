@@ -7,8 +7,6 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import miage.procratinator.procrastinator.entities.enumeration.NiveauRecompense;
-import miage.procratinator.procrastinator.entities.enumeration.TypeRecompense;
 
 @Getter
 @Setter

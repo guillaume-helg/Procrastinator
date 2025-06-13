@@ -8,7 +8,6 @@ import miage.procratinator.procrastinator.entities.enumeration.DegresUrgence;
 import miage.procratinator.procrastinator.entities.enumeration.StatutTache;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter

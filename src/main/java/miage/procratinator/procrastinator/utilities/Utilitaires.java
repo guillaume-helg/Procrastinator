@@ -10,7 +10,7 @@ public class Utilitaires {
      * Cette méthode prend en compte les années bissextiles et les différences de longueur des mois.
      *
      * @param dateDebut La date de début pour le calcul
-     * @param dateFin La date de fin pour le calcul
+     * @param dateFin   La date de fin pour le calcul
      * @return Period Un objet Period contenant la différence en années, mois et jours
      */
     public static Period calculerDifferenceEntreDate(LocalDate dateDebut, LocalDate dateFin) {

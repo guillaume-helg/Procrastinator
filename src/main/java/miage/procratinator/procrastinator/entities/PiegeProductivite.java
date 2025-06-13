@@ -31,7 +31,6 @@ public class PiegeProductivite {
     private Statut statut;
 
 
-
 }
 
 

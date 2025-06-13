@@ -1,7 +1,5 @@
 package miage.procratinator.procrastinator.exposition;
 
-import jakarta.servlet.http.HttpSession;
-import miage.procratinator.procrastinator.entities.AntiProcrastinateur;
 import miage.procratinator.procrastinator.entities.Utilisateur;
 import miage.procratinator.procrastinator.metier.UtilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +39,10 @@ public class UtilisateurController {
         return ResponseEntity.ok(utilisateurService.update(id, utilisateur));
     }
 
+    /**
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         utilisateurService.deleteById(id);

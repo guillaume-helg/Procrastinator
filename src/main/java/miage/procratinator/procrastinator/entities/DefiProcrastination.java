@@ -11,7 +11,6 @@ import miage.procratinator.procrastinator.entities.enumeration.Difficulte;
 import miage.procratinator.procrastinator.entities.enumeration.Statut;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter

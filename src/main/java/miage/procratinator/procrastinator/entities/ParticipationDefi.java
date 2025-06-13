@@ -10,7 +10,6 @@ import lombok.Setter;
 import miage.procratinator.procrastinator.entities.enumeration.StatutParticipationDefi;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter
