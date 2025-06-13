@@ -7,18 +7,14 @@ import miage.procratinator.procrastinator.dao.ProcrastinateurRepository;
 import miage.procratinator.procrastinator.entities.AntiProcrastinateur;
 import miage.procratinator.procrastinator.entities.DefiProcrastination;
 import miage.procratinator.procrastinator.entities.GrandConcours;
-import miage.procratinator.procrastinator.entities.Procrastinateur;
-import miage.procratinator.procrastinator.entities.enumeration.Difficulte;
-import miage.procratinator.procrastinator.entities.enumeration.Statut;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
+
+import static miage.procratinator.procrastinator.utilities.Utilitaires.calculerDifferenceEntreDate;
 
 @Service
 public class GestionnaireService {
@@ -38,6 +34,18 @@ public class GestionnaireService {
     @Autowired
     private ProcrastinateurRepository procrastinateurRepository;
 
+    /**
+     * Crée ou récupère un utilisateur AntiProcrastinateur basé sur le pseudo fourni.
+     * Cette méthode implémente un pattern "trouver ou créer" pour gérer les entités AntiProcrastinateur.
+     *
+     * @param pseudo Le nom d'utilisateur/pseudo de l'AntiProcrastinateur à créer ou récupérer
+     * @return AntiProcrastinateur L'entité AntiProcrastinateur existante ou nouvellement créée
+     *
+     * La méthode suit la logique suivante :
+     * 1. Vérifie d'abord si un AntiProcrastinateur avec le pseudo donné existe déjà
+     * 2. Si aucun n'existe, en crée un nouveau avec le pseudo fourni
+     * 3. Si un existe déjà, retourne l'instance existante (prend le premier si plusieurs existent)
+     */
     public AntiProcrastinateur creerAntiProcrastinateur(String pseudo) {
         List<AntiProcrastinateur> clients = antiProcrastinateurRepository.findByPseudo(pseudo);
         AntiProcrastinateur antiProcrastinateur;
@@ -52,30 +60,36 @@ public class GestionnaireService {
         return antiProcrastinateur;
     }
 
+    /**
+     * Crée ou récupère un défi de procrastination.
+     * La méthode suit la logique suivante :
+     * - Recherche un défi existant avec l'ID fourni
+     * - Si aucun défi n'existe, en crée un nouveau avec les propriétés du défi fourni
+     * - Si un défi existe déjà, retourne l'instance existante
+     * @param defiProcrastination L'entité contenant les informations du défi à créer ou récupérer
+     *                           (ID, titre, description, durée, difficulté, points, dates, etc.)
+     * @return DefiProcrastination L'entité DefiProcrastination existante ou nouvellement créée
+     */
     public DefiProcrastination creerDefiProcrastinateur(DefiProcrastination defiProcrastination) {
-        List<DefiProcrastination> defiProcrastinations = defiProcrastinationRepository.findByIdDefiProcrastination(defiProcrastination.getIdDefiProcrastination());
-        DefiProcrastination newDefiProcrastination;
+        List<DefiProcrastination> existingDefis = defiProcrastinationRepository
+                .findByIdDefiProcrastination(defiProcrastination.getIdDefiProcrastination());
 
-        if (defiProcrastinations.isEmpty()) {
-            newDefiProcrastination = new DefiProcrastination();
-            newDefiProcrastination.setIdDefiProcrastination(defiProcrastination.getIdDefiProcrastination());
-            newDefiProcrastination.setTitre(defiProcrastination.getTitre());
-            newDefiProcrastination.setDateDebut(defiProcrastination.getDateDebut());
-            newDefiProcrastination.setDateFin(defiProcrastination.getDateFin());
-            newDefiProcrastination.setDescription(defiProcrastination.getDescription());
-            newDefiProcrastination.setDuree(defiProcrastination.getDuree());
-            newDefiProcrastination.setDifficulte(defiProcrastination.getDifficulte());
-            newDefiProcrastination.setPointsAGagner(defiProcrastination.getPointsAGagner());
-            newDefiProcrastination.setIdAntiProcrastinateur(defiProcrastination.getIdAntiProcrastinateur());
-            newDefiProcrastination.setStatut(defiProcrastination.getStatut());
-            newDefiProcrastination = defiProcrastinationRepository.save(newDefiProcrastination);
-        } else {
-            newDefiProcrastination = defiProcrastinations.getFirst();
+        defiProcrastination.setIdGestionnaire(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
+        defiProcrastination.setDuree(
+            (float) calculerDifferenceEntreDate(
+                    defiProcrastination.getDateDebut(),
+                    defiProcrastination.getDateFin()).getDays()
+        );
+
+        if (existingDefis.isEmpty()) {
+            DefiProcrastination newDefi = new DefiProcrastination();
+            BeanUtils.copyProperties(defiProcrastination, newDefi); // Classe de Spring qui fait plaisir
+            return defiProcrastinationRepository.save(newDefi);
         }
-        return newDefiProcrastination;
+        return existingDefis.getFirst();
     }
 
-    public GrandConcours creerGrandConcour(GrandConcours grandConcour) {
+    public GrandConcours creerGrandConcours(GrandConcours grandConcour) {
         List<GrandConcours> grandConcours = grandConcoursRepository.findGrandConcourByIdGrandConcour(grandConcour.getIdGrandConcour());
         GrandConcours nouveauGrandConcours;
 

@@ -10,6 +10,7 @@ import lombok.Setter;
 import miage.procratinator.procrastinator.entities.enumeration.Difficulte;
 import miage.procratinator.procrastinator.entities.enumeration.Statut;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -26,8 +27,8 @@ public class DefiProcrastination {
     private Float duree;
     private Difficulte difficulte;
     private int pointsAGagner;
-    private Long idAntiProcrastinateur;
-    private Date dateDebut;
-    private Date dateFin;
+    private Long idGestionnaire;
+    private LocalDate dateDebut;
+    private LocalDate dateFin;
     private Statut statut;
 }

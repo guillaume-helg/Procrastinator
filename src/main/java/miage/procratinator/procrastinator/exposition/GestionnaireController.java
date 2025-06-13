@@ -58,7 +58,7 @@ public class GestionnaireController {
      */
     @PostMapping("/organiser-grand-concours")
     public ResponseEntity<GrandConcours> creerGrandConcourAnnuel(@RequestBody GrandConcours grandConcours) {
-        GrandConcours saved = gestionnaireService.creerGrandConcour(grandConcours);
+        GrandConcours saved = gestionnaireService.creerGrandConcours(grandConcours);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 }
