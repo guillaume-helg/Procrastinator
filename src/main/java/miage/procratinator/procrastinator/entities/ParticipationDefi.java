@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import miage.procratinator.procrastinator.entities.enumeration.StatutParticipationDefi;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -22,9 +23,7 @@ public class ParticipationDefi {
     private Long idParticipationDefi;
     private Long idDefiProcrastinateur;
     private Long idProcrastinateur;
-    private Date dateInscription;
+    private LocalDate dateInscription;
     private StatutParticipationDefi statutParticipationDefi;
-    private int pointsGagnes;
-
 }
 

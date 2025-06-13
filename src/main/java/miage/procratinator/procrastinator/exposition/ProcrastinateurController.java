@@ -48,9 +48,11 @@ public class ProcrastinateurController {
         return procrastinateurService.updateStatutTache(tacheAEviter);
     }
 
-    public void participerDefiProcrastination() {
-
+    @PostMapping("/participerDefi/{idDefi}")
+    public ResponseEntity<?> participerDefiProcrastination(@PathVariable Long idDefi) {
+        return procrastinateurService.participerDefi(idDefi);
     }
+
 
     public void eviterPiegeProductivite() {
 

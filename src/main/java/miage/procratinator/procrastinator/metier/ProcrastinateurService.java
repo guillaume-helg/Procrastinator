@@ -1,12 +1,12 @@
 package miage.procratinator.procrastinator.metier;
 
 import jakarta.servlet.http.HttpSession;
+import miage.procratinator.procrastinator.dao.DefiProcrastinationRepository;
+import miage.procratinator.procrastinator.dao.ParticipationDefiRepository;
 import miage.procratinator.procrastinator.dao.ProcrastinateurRepository;
 import miage.procratinator.procrastinator.dao.TachesAEviterRepository;
 import miage.procratinator.procrastinator.entities.*;
-import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastination;
-import miage.procratinator.procrastinator.entities.enumeration.NiveauRecompense;
-import miage.procratinator.procrastinator.entities.enumeration.StatutTache;
+import miage.procratinator.procrastinator.entities.enumeration.*;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +28,12 @@ public class ProcrastinateurService {
 
     @Autowired
     private TachesAEviterRepository tachesAEviterRepository;
+    
+    @Autowired
+    private DefiProcrastinationRepository defiProcrastinationRepository;
+    
+    @Autowired
+    private ParticipationDefiRepository participationDefiRepository;
 
     @Autowired
     private UtilisateurCourant utilisateurCourant;
@@ -185,5 +191,42 @@ public class ProcrastinateurService {
 
     public List<TacheAEviter> getTachesByProcrastinateurId() {
         return tachesAEviterRepository.findTacheAEviterByIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
+    }
+
+    public ResponseEntity<?> participerDefi(Long idDefi) {
+    DefiProcrastination defi = defiProcrastinationRepository.findById(idDefi)
+            .orElseThrow();
+            
+        if (utilisateurCourant == null || utilisateurCourant.getUtilisateurConnecte() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur non connecté");
+        }
+
+        List<ParticipationDefi> participations = participationDefiRepository
+                .findParticipationDefiByIdDefiProcrastinateur(idDefi);
+
+        if (defi.getStatut() != Statut.ACTIF) {
+            return ResponseEntity.badRequest().body("Le défi n'est pas actif");
+        }
+
+        Long userId = utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur();
+        boolean alreadyParticipating = participations.stream()
+                .anyMatch(participation -> participation.getIdProcrastinateur().equals(userId));
+
+        if (alreadyParticipating) {
+            return ResponseEntity.badRequest().body("Déjà inscrit au défi");
+        }
+
+        if (participations.size() >= 5) {
+            return ResponseEntity.badRequest().body("Le nombre maximum de participants est atteint");
+        }
+
+        ParticipationDefi newParticipation = new ParticipationDefi();
+        newParticipation.setIdProcrastinateur(userId);
+        newParticipation.setDateInscription(LocalDate.now());
+        newParticipation.setIdDefiProcrastinateur(defi.getIdDefiProcrastination());
+        newParticipation.setStatutParticipationDefi(StatutParticipationDefi.INSCRIT);
+
+        ParticipationDefi savedParticipation = participationDefiRepository.save(newParticipation);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedParticipation);
     }
 }

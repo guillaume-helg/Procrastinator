@@ -89,20 +89,27 @@ public class GestionnaireService {
         return existingDefis.getFirst();
     }
 
+    /**
+     * Crée ou récupère un grand concours.
+     * Cette méthode implémente un pattern "trouver ou créer" pour les entités GrandConcours.
+     *
+     * @param grandConcour L'entité contenant les informations du concours à créer ou récupérer
+     * @return GrandConcours L'entité existante ou nouvellement créée
+     * @throws IllegalArgumentException si grandConcour est null
+     */
     public GrandConcours creerGrandConcours(GrandConcours grandConcour) {
-        List<GrandConcours> grandConcours = grandConcoursRepository.findGrandConcourByIdGrandConcour(grandConcour.getIdGrandConcour());
-        GrandConcours nouveauGrandConcours;
-
-        if (grandConcours.isEmpty()) {
-            nouveauGrandConcours = new GrandConcours();
-            nouveauGrandConcours.setNom(grandConcour.getNom());
-            nouveauGrandConcours.setRecompense(grandConcour.getRecompense());
-            nouveauGrandConcours.setDateDebut(grandConcour.getDateDebut());
-            nouveauGrandConcours.setDateFin(grandConcour.getDateFin());
-            nouveauGrandConcours = grandConcoursRepository.save(nouveauGrandConcours);
-        } else {
-            nouveauGrandConcours = grandConcours.getFirst();
+        if (grandConcour == null) {
+            throw new IllegalArgumentException("Le grand concours ne peut pas être null");
         }
-        return nouveauGrandConcours;
+
+        return grandConcoursRepository
+                .findGrandConcourByIdGrandConcour(grandConcour.getIdGrandConcour())
+                .stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    GrandConcours nouveauConcours = new GrandConcours();
+                    BeanUtils.copyProperties(grandConcour, nouveauConcours);
+                    return grandConcoursRepository.save(nouveauConcours);
+                });
     }
 }
