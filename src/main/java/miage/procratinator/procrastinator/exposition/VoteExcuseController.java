@@ -6,10 +6,7 @@ import miage.procratinator.procrastinator.metier.VoteExcuseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/excuse")
@@ -24,5 +21,13 @@ public class VoteExcuseController {
         return new ResponseEntity<>(savedExcuse, HttpStatus.CREATED);
     }
 
+    @GetMapping()
+    public ResponseEntity<?> classementExcuse() {
+        return ResponseEntity.ok(voteExcuseService.classement());
+    }
 
+    @PostMapping("/voter/{id}")
+    public ResponseEntity<?> voterExcuse(@PathVariable Long idExcuse) {
+        return voteExcuseService.updateVoteExcuse(idExcuse);
+    }
 }

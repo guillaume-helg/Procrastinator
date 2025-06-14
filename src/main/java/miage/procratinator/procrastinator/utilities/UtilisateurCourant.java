@@ -3,6 +3,7 @@ package miage.procratinator.procrastinator.utilities;
 import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.Setter;
+import miage.procratinator.procrastinator.entities.Procrastinateur;
 import miage.procratinator.procrastinator.entities.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,5 +33,15 @@ public class UtilisateurCourant {
      */
     public boolean estConnecte() {
         return getUtilisateurConnecte() != null;
+    }
+
+    /**
+     * Vérifie si l'utilisateur actuellement connecté est un procrastinateur.
+     *
+     * @return true si l'utilisateur connecté est un procrastinateur, false sinon
+     */
+    public boolean estProcrastinateur() {
+        Utilisateur utilisateur = getUtilisateurConnecte();
+        return utilisateur instanceof Procrastinateur;
     }
 }
