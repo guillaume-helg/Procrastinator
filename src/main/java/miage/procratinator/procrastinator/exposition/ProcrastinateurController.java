@@ -18,11 +18,6 @@ public class ProcrastinateurController {
     @Autowired
     private ProcrastinateurService procrastinateurService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String email, HttpSession session) {
-        return procrastinateurService.loginProcrastinateur(email, session);
-    }
-
     @PostMapping("/inscrire")
     public ResponseEntity<Procrastinateur> createProcrastinateur(@RequestBody Procrastinateur procrastinateur) {
         Procrastinateur savedProcrastinateur = procrastinateurService.createProcrastinateur(procrastinateur);

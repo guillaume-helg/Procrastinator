@@ -1,6 +1,5 @@
 package miage.procratinator.procrastinator.metier;
 
-import jakarta.servlet.http.HttpSession;
 import miage.procratinator.procrastinator.dao.DefiProcrastinationRepository;
 import miage.procratinator.procrastinator.dao.ParticipationDefiRepository;
 import miage.procratinator.procrastinator.dao.ProcrastinateurRepository;
@@ -11,6 +10,7 @@ import miage.procratinator.procrastinator.entities.Procrastinateur;
 import miage.procratinator.procrastinator.entities.TacheAEviter;
 import miage.procratinator.procrastinator.entities.enumeration.*;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,53 +41,29 @@ public class ProcrastinateurService {
     private UtilisateurCourant utilisateurCourant;
 
     /**
-     * Connecte un utilisateur avec son adresse email
-     * Si l'email existe, l'utilisateur est ajouté à la session
-     * et retourné avec un code 200 (OK)
-     * Sinon, retourne un message d'erreur avec un code 404
-     *
-     * @param email   l'email de l'utilisateur
-     * @param session la session où stocker l'utilisateur connecté
-     * @return l'utilisateur si trouvé, sinon un message d'erreur
-     */
-    public ResponseEntity<?> loginProcrastinateur(String email, HttpSession session) {
-        List<Procrastinateur> utilisateurs = procrastinateurRepository.findProcrastinateurByMail(email);
-
-        if (utilisateurs.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email inconnu");
-        }
-
-        Procrastinateur utilisateur = utilisateurs.getFirst();
-        session.setAttribute("utilisateur", utilisateur);
-
-        return ResponseEntity.ok(utilisateur);
-    }
-
-    /**
      * Crée un procrastinateur s'il n'existe pas déjà via son ID utilisateur
      * Si trouvé, retourne l'existant ; sinon, initialise un nouveau procrastinateur
      * avec les données fournies, puis le sauvegarde
      *
-     * @param bodyProcrastinateur Les données du procrastinateur à créer
+     * @param procrastinateur Les données du procrastinateur à créer
      * @return Le procrastinateur existant ou nouvellement créé
      */
-    public Procrastinateur createProcrastinateur(Procrastinateur bodyProcrastinateur) {
-        List<Procrastinateur> procrastinateurs = procrastinateurRepository.findProcrastinateurByPseudo(bodyProcrastinateur.getPseudo());
-        Procrastinateur procrastinateur;
-        LocalDate today = LocalDate.now();
-        if (procrastinateurs.isEmpty()) {
-            procrastinateur = new Procrastinateur();
-            procrastinateur.setMail(bodyProcrastinateur.getMail());
-            procrastinateur.setPseudo(bodyProcrastinateur.getPseudo());
-            procrastinateur.setExcusePreferee(bodyProcrastinateur.getExcusePreferee());
-            procrastinateur.setDateInscription(today);
-            procrastinateur.setPointsAccumules(0);
-            procrastinateur.setNiveauProcrastination(NiveauProcrastination.DEBUTANT);
-            procrastinateur = procrastinateurRepository.save(procrastinateur);
-        } else {
-            procrastinateur = procrastinateurs.getFirst();
+    public Procrastinateur createProcrastinateur(Procrastinateur procrastinateur) {
+        if (procrastinateur == null) {
+            throw new IllegalArgumentException("Le procrastinateur est null");
         }
-        return procrastinateur;
+
+        return procrastinateurRepository
+            .findProcrastinateurByPseudo(procrastinateur.getPseudo()).stream().findFirst().orElseGet(
+                ()-> {
+                    procrastinateur.setNiveauProcrastination(NiveauProcrastination.DEBUTANT);
+                    procrastinateur.setPointsAccumules(0);
+                    procrastinateur.setDateInscription(LocalDate.now());
+                    Procrastinateur nouveauProcrastinateur = new Procrastinateur();
+                    BeanUtils.copyProperties(procrastinateur, nouveauProcrastinateur);
+                    return procrastinateurRepository.save(nouveauProcrastinateur);
+                }
+            );
     }
 
     /**
@@ -98,28 +74,21 @@ public class ProcrastinateurService {
      *
      * @return la tâche existante ou la nouvelle tâche créée
      */
-    public TacheAEviter creerTacheAEviter(TacheAEviter bodyTacheAEviter) {
-        List<TacheAEviter> tacheAEviters = tachesAEviterRepository.findTacheAEviterByDescription(bodyTacheAEviter.getDescription());
-        TacheAEviter tacheAEviter;
-
-        LocalDate today = LocalDate.now();
-
-        if (tacheAEviters.isEmpty()) {
-            tacheAEviter = new TacheAEviter();
-            tacheAEviter.setDescription(bodyTacheAEviter.getDescription());
-            tacheAEviter.setIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
-            tacheAEviter.setDegresUrgence(bodyTacheAEviter.getDegresUrgence());
-            tacheAEviter.setDateLimite(bodyTacheAEviter.getDateLimite());
-            tacheAEviter.setConsequence(bodyTacheAEviter.getConsequence());
-            //tacheAEviter.setDateCreation(bodyTacheAEviter.getDateCreation());
-            tacheAEviter.setDateCreation(today);
-
-            tacheAEviter.setStatut(StatutTache.EN_ATTENTE);
-            tacheAEviter = tachesAEviterRepository.save(tacheAEviter);
-        } else {
-            tacheAEviter = tacheAEviters.getFirst();
+    public TacheAEviter creerTacheAEviter(TacheAEviter tacheAEviter) {
+        if (tacheAEviter == null) {
+            throw new IllegalArgumentException("tacheAEviter est null");
         }
-        return tacheAEviter;
+
+        return tachesAEviterRepository.findTacheAEviterByDescription(tacheAEviter.getDescription()).stream().findFirst().orElseGet(
+                () -> {
+                    tacheAEviter.setIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
+                    tacheAEviter.setDateCreation(LocalDate.now());
+                    tacheAEviter.setStatut(StatutTache.EN_ATTENTE);
+                    TacheAEviter nouvelleTacheAEviter = new TacheAEviter();
+                    BeanUtils.copyProperties(tacheAEviter, nouvelleTacheAEviter);
+                    return tachesAEviterRepository.save(nouvelleTacheAEviter);
+                }
+        );
     }
 
     /**
@@ -216,7 +185,7 @@ public class ProcrastinateurService {
      * @param procrastinateur le procrastinateur dont l'éligibilité à la récompense est vérifiée
      * @param niveau          le niveau de récompense requis contenant les critères d'éligibilité
      * @return vrai si le procrastinateur remplit les conditions d'ancienneté et de points
-     * d'expérience requis; faux sinon
+     * d'expérience requis faux sinon
      */
     public boolean checkAttributionRecompense(Procrastinateur procrastinateur, NiveauRecompense niveau) {
         LocalDate dateInscription = procrastinateur.getDateInscription();

@@ -1,0 +1,64 @@
+package miage.procratinator.procrastinator.exposition;
+
+import miage.procratinator.procrastinator.entities.GrandConcours;
+import miage.procratinator.procrastinator.metier.GestionnaireService;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(GestionnaireController.class)
+public class GestionnaireControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private GestionnaireService gestionnaireService;
+
+    @Test
+    void shouldCreateGrandConcourAnnuelSuccessfully() throws Exception {
+        // Arrange
+        GrandConcours grandConcours = new GrandConcours();
+        grandConcours.setIdGrandConcour(1L);
+
+        Mockito.when(gestionnaireService.creerGrandConcours(any(GrandConcours.class))).thenReturn(grandConcours);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/gestionnaire/organiser-grand-concours")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"idGrandConcour\":1}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.idGrandConcour").value(1));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenRequestIsInvalid() throws Exception {
+        // Act & Assert
+        mockMvc.perform(post("/api/gestionnaire/organiser-grand-concours")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldHandleServiceErrorGracefully() throws Exception {
+        // Arrange
+        Mockito.when(gestionnaireService.creerGrandConcours(any(GrandConcours.class)))
+                .thenThrow(new RuntimeException("Service Error"));
+
+        // Act & Assert
+        mockMvc.perform(post("/api/gestionnaire/organiser-grand-concours")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"idGrandConcour\":1}"))
+                .andExpect(status().isInternalServerError());
+    }
+}

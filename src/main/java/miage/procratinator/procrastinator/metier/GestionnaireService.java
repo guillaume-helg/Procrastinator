@@ -43,48 +43,51 @@ public class GestionnaireService {
      * 3. Si un existe déjà, retourne l'instance existante (prend le premier si plusieurs existent)
      */
     public AntiProcrastinateur creerAntiProcrastinateur(AntiProcrastinateur antiProcrastinateur) {
-        List<AntiProcrastinateur> clients = antiProcrastinateurRepository.findByPseudo(antiProcrastinateur.getPseudo());
-        AntiProcrastinateur nouveauAntiProcrastinateur;
-
-        if (clients.isEmpty()) {
-            nouveauAntiProcrastinateur = new AntiProcrastinateur();
-            antiProcrastinateur.setDateInscription(LocalDate.now());
-            BeanUtils.copyProperties(antiProcrastinateur, nouveauAntiProcrastinateur); // Classe de Spring qui fait plaisir
-            nouveauAntiProcrastinateur = antiProcrastinateurRepository.save(nouveauAntiProcrastinateur);
-        } else {
-            nouveauAntiProcrastinateur = clients.getFirst();
+        if (antiProcrastinateur == null) {
+            throw new IllegalArgumentException("L'antiProcrastinateur ne peut pas être null");
         }
-        return nouveauAntiProcrastinateur;
+        
+        return antiProcrastinateurRepository
+                .findByPseudo(antiProcrastinateur.getPseudo())
+                .stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    AntiProcrastinateur nouveauAntiProcrastinateur = new AntiProcrastinateur();
+                    antiProcrastinateur.setDateInscription(LocalDate.now());
+                    BeanUtils.copyProperties(antiProcrastinateur, nouveauAntiProcrastinateur);
+                    return antiProcrastinateurRepository.save(nouveauAntiProcrastinateur);
+                });
     }
 
     /**
      * Crée ou récupère un défi de procrastination.
-     * La méthode suit la logique suivante :
-     * - Recherche un défi existant avec l'ID fourni
-     * - Si aucun défi n'existe, en crée un nouveau avec les propriétés du défi fourni
-     * - Si un défi existe déjà, retourne l'instance existante
+     * Cette méthode suit un modèle "trouver ou créer" pour gérer les entités de type DefiProcrastination.
+     * Si un défi avec le même ID existe, il est retourné. Sinon, un nouveau défi est créé avec les informations fournies.
      *
-     * @param defiProcrastination L'entité contenant les informations du défi à créer ou récupérer
-     *                            (ID, titre, description, durée, difficulté, points, dates, etc.)
-     * @return DefiProcrastination L'entité DefiProcrastination existante ou nouvellement créée
+     * @param defiProcrastination L'entité contenant les informations du défi de procrastination à créer ou récupérer
+     * @return DefiProcrastination L'entité existante ou nouvellement créée
+     * @throws IllegalArgumentException si defiProcrastination est null
      */
     public DefiProcrastination creerDefiProcrastinateur(DefiProcrastination defiProcrastination) {
-        List<DefiProcrastination> existingDefis = defiProcrastinationRepository
-                .findByIdDefiProcrastination(defiProcrastination.getIdDefiProcrastination());
-
-        defiProcrastination.setIdGestionnaire(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
-        defiProcrastination.setDuree(
-                (float) calculerDifferenceEntreDate(
-                        defiProcrastination.getDateDebut(),
-                        defiProcrastination.getDateFin()).getDays()
-        );
-
-        if (existingDefis.isEmpty()) {
-            DefiProcrastination newDefi = new DefiProcrastination();
-            BeanUtils.copyProperties(defiProcrastination, newDefi); // Classe de Spring qui fait plaisir
-            return defiProcrastinationRepository.save(newDefi);
+        if (defiProcrastination == null) {
+            throw new IllegalArgumentException("Le défi de procrastination ne peut pas être null");
         }
-        return existingDefis.getFirst();
+
+        return defiProcrastinationRepository
+                .findByIdDefiProcrastination(defiProcrastination.getIdDefiProcrastination())
+                .stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    defiProcrastination.setIdGestionnaire(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
+                    defiProcrastination.setDuree((float) calculerDifferenceEntreDate(
+                            defiProcrastination.getDateDebut(),
+                            defiProcrastination.getDateFin()).getDays()
+                    );
+
+                    DefiProcrastination newDefi = new DefiProcrastination();
+                    BeanUtils.copyProperties(defiProcrastination, newDefi);
+                    return defiProcrastinationRepository.save(newDefi);
+                });
     }
 
     /**

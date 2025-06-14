@@ -20,7 +20,7 @@ public class ParticipationDefi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idParticipationDefi;
-    private Long idDefiProcrastinateur;
+    private Long idDefi;
     private Long idProcrastinateur;
     private LocalDate dateInscription;
     private StatutParticipationDefi statutParticipationDefi;

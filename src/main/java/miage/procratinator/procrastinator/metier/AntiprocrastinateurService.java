@@ -6,8 +6,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class AntiprocrastinateurService {
 
@@ -21,6 +19,10 @@ public class AntiprocrastinateurService {
      * @return l'objet PiegeProductivite créé ou existant
      */
     public PiegeProductivite creerPiegeProductivite(PiegeProductivite piegeProductivite) {
+        if (piegeProductivite == null) {
+            throw new IllegalArgumentException("piegeProductivite ne peut pas être null");
+        }
+
         return piegeProductiviteRepository.findByIdPiegeProductivite(piegeProductivite.getIdPiegeProductivite())
                 .stream()
                 .findFirst()
