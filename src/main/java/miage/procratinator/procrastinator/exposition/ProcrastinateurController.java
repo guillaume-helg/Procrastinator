@@ -51,9 +51,6 @@ public class ProcrastinateurController {
         return procrastinateurService.validerDefi(idDefi);
     }
 
-
-
-
     public void eviterPiegeProductivite() {
 
     }

@@ -128,9 +128,7 @@ public class ProcrastinateurService {
         procrastinateur.setPointsAccumules(procrastinateur.getPointsAccumules() + pointsGagnes);
         procrastinateurRepository.save(procrastinateur);
 
-        String passageNiveau = (this.checkNiveauProcrastinateur(procrastinateur) != null)
-                ? "\nLe procrastinateur vient d'être promu " + procrastinateur.getNiveauProcrastination() + " !"
-                : "";
+        String passageNiveau = this.checkNiveauProcrastinateur(procrastinateur);
 
         return ResponseEntity.status(HttpStatus.OK).body("Tâche evitée avec succès ! + " + pointsGagnes + " points !" + passageNiveau);
     }
@@ -162,17 +160,17 @@ public class ProcrastinateurService {
      * @param procrastinateur le procrastinateur dont le niveau de procrastination doit être vérifié et potentiellement mis à jour
      * @return le niveau de procrastination mis à jour si un changement a eu lieu, ou null si aucune mise à jour n'a été effectuée
      */
-    public NiveauProcrastination checkNiveauProcrastinateur(Procrastinateur procrastinateur) {
-        if (procrastinateur.getPointsAccumules() >= NiveauProcrastination.INTERMEDIAIRE.getPointsRequis() && procrastinateur.getNiveauProcrastination() != NiveauProcrastination.INTERMEDIAIRE) {
-            procrastinateur.setNiveauProcrastination(NiveauProcrastination.INTERMEDIAIRE);
-            procrastinateurRepository.save(procrastinateur);
-            return procrastinateur.getNiveauProcrastination();
-        } else if (procrastinateur.getPointsAccumules() >= NiveauProcrastination.EXPERT.getPointsRequis() && procrastinateur.getNiveauProcrastination() != NiveauProcrastination.EXPERT) {
-            procrastinateur.setNiveauProcrastination(NiveauProcrastination.EXPERT);
-            procrastinateurRepository.save(procrastinateur);
-            return procrastinateur.getNiveauProcrastination();
+    public String checkNiveauProcrastinateur(Procrastinateur procrastinateur) {
+        for(NiveauProcrastination niveau : NiveauProcrastination.values()) {
+            if(procrastinateur.getPointsAccumules() >= niveau.getPointsRequis()) {
+                if(procrastinateur.getNiveauProcrastination() != niveau) {
+                    procrastinateur.setNiveauProcrastination(niveau);
+                    procrastinateurRepository.save(procrastinateur);
+                    return "L'utilisateur vient d'évoluer au niveau : " + procrastinateur.getNiveauProcrastination();
+                }
+            }
         }
-        return null;
+        return "L'utilisateur est au niveau : " + procrastinateur.getNiveauProcrastination() + "";
     }
 
     /**
@@ -268,6 +266,6 @@ public class ProcrastinateurService {
         procrastinateurRepository.save(procrastinateur);
         participationDefiRepository.save(participationDefi);
 
-        return ResponseEntity.status(HttpStatus.OK).body(defi);
+        return ResponseEntity.status(HttpStatus.OK).body("Défi valider !!! "+ defi.getPointsAGagner() + " points !" + "\n " + checkNiveauProcrastinateur(procrastinateur));
     }
 }
