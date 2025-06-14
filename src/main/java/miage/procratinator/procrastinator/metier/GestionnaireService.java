@@ -44,17 +44,17 @@ public class GestionnaireService {
      */
     public AntiProcrastinateur creerAntiProcrastinateur(AntiProcrastinateur antiProcrastinateur) {
         List<AntiProcrastinateur> clients = antiProcrastinateurRepository.findByPseudo(antiProcrastinateur.getPseudo());
-        AntiProcrastinateur newAntiProcrastinateur;
+        AntiProcrastinateur nouveauAntiProcrastinateur;
 
         if (clients.isEmpty()) {
-            newAntiProcrastinateur = new AntiProcrastinateur();
+            nouveauAntiProcrastinateur = new AntiProcrastinateur();
             antiProcrastinateur.setDateInscription(LocalDate.now());
-            BeanUtils.copyProperties(antiProcrastinateur, newAntiProcrastinateur); // Classe de Spring qui fait plaisir
-            newAntiProcrastinateur = antiProcrastinateurRepository.save(newAntiProcrastinateur);
+            BeanUtils.copyProperties(antiProcrastinateur, nouveauAntiProcrastinateur); // Classe de Spring qui fait plaisir
+            nouveauAntiProcrastinateur = antiProcrastinateurRepository.save(nouveauAntiProcrastinateur);
         } else {
-            newAntiProcrastinateur = clients.getFirst();
+            nouveauAntiProcrastinateur = clients.getFirst();
         }
-        return newAntiProcrastinateur;
+        return nouveauAntiProcrastinateur;
     }
 
     /**

@@ -2,6 +2,7 @@ package miage.procratinator.procrastinator.metier;
 
 import miage.procratinator.procrastinator.dao.PiegeProductiviteRepository;
 import miage.procratinator.procrastinator.entities.PiegeProductivite;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,21 +14,20 @@ public class AntiprocrastinateurService {
     @Autowired
     private PiegeProductiviteRepository piegeProductiviteRepository;
 
-
-    public PiegeProductivite creerPiegeProductivite(Long idPiegeProductivite, String titre, String description) {
-        List<PiegeProductivite> piegeProductivites = piegeProductiviteRepository.findByIdPiegeProductivite(idPiegeProductivite);
-        PiegeProductivite piegeProductivite;
-
-        if (piegeProductivites.isEmpty()) {
-            piegeProductivite = new PiegeProductivite();
-            piegeProductivite.setIdPiegeProductivite(idPiegeProductivite);
-            piegeProductivite.setTitre(titre);
-            piegeProductivite.setDescription(description);
-            piegeProductivite.setTitre(titre);
-            piegeProductivite = piegeProductiviteRepository.save(piegeProductivite);
-        } else {
-            piegeProductivite = piegeProductivites.getFirst();
-        }
-        return piegeProductivite;
+    /**
+     * Crée un nouveau piège de productivité ou récupère un piège existant si un piège avec le même identifiant existe déjà.
+     *
+     * @param piegeProductivite l'objet contenant les informations du piège de productivité à créer
+     * @return l'objet PiegeProductivite créé ou existant
+     */
+    public PiegeProductivite creerPiegeProductivite(PiegeProductivite piegeProductivite) {
+        return piegeProductiviteRepository.findByIdPiegeProductivite(piegeProductivite.getIdPiegeProductivite())
+                .stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    PiegeProductivite nouveauPiege = new PiegeProductivite();
+                    BeanUtils.copyProperties(piegeProductivite, nouveauPiege);
+                    return piegeProductiviteRepository.save(nouveauPiege);
+                });
     }
 }

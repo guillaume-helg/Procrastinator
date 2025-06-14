@@ -26,7 +26,6 @@ public class AttributionRecompense {
     private Date dateExpiration;
     private String contexte;
     private Statut statut;
-
 }
 
 

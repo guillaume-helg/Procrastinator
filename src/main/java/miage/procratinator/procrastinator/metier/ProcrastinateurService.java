@@ -123,8 +123,11 @@ public class ProcrastinateurService {
     }
 
     /**
-     * @param bodyTacheAEviter
-     * @return
+     * Met à jour le statut d'une tâche spécifiée en fonction des données fournies.
+     *
+     * @param bodyTacheAEviter l'objet tâche contenant le statut mis à jour et la description.
+     *                         La description est utilisée pour localiser la tâche à mettre à jour.
+     * @return un ResponseEntity contenant le résultat de l'opération de mise à jour
      */
     public ResponseEntity<?> updateStatutTache(TacheAEviter bodyTacheAEviter) {
         List<TacheAEviter> tacheAEviters = tachesAEviterRepository.findTacheAEviterByDescription(bodyTacheAEviter.getDescription());
@@ -146,8 +149,11 @@ public class ProcrastinateurService {
     }
 
     /**
-     * @param tacheAEviter
-     * @return
+     * Gère l'évitement réussi d'une tâche, met à jour les points du procrastinateur,
+     * vérifie une éventuelle promotion de niveau et retourne une réponse appropriée.
+     *
+     * @param tacheAEviter la tâche qui a été évitée et contribue à l'accumulation de points
+     * @return un ResponseEntity contenant le message de succès et les détails de promotion
      */
     public ResponseEntity<?> tacheEviteeAvecSucces(TacheAEviter tacheAEviter) {
         List<Procrastinateur> procrastinateurs = procrastinateurRepository.findProcrastinateurByMail(utilisateurCourant.getUtilisateurConnecte().getMail());
@@ -163,6 +169,14 @@ public class ProcrastinateurService {
         return ResponseEntity.status(HttpStatus.OK).body("Tâche evitée avec succès ! + " + pointsGagnes + " points !" + passageNiveau);
     }
 
+    /**
+     * Calcule le score d'une tâche évitée en fonction de son urgence et du dépassement de sa date limite.
+     * Le score est déterminé par les points du degré d'urgence et les jours de retard éventuels.
+     *
+     * @param tache La tâche à évaluer, contenant les informations sur son degré d'urgence et sa date limite.
+     * @return Le score de la tâche évitée, qui est la somme des points d'urgence et des points de retard,
+     * plafonné à une valeur maximale de 200
+     */
     public int calculTacheEvitee(TacheAEviter tache) {
         int pointsDegreUrgence = tache.getDegresUrgence().getValeur() * 10;
         int pointsJoursDeRetard = 0;
@@ -174,6 +188,14 @@ public class ProcrastinateurService {
         return Math.min(pointsDegreUrgence + pointsJoursDeRetard, 200);
     }
 
+    /**
+     * Vérifie et met à jour le niveau de procrastination du procrastinateur donné
+     * en fonction de ses points accumulés. Si les points atteignent les exigences pour
+     * un niveau de procrastination supérieur, le niveau est mis à jour et persisté.
+     *
+     * @param procrastinateur le procrastinateur dont le niveau de procrastination doit être vérifié et potentiellement mis à jour
+     * @return le niveau de procrastination mis à jour si un changement a eu lieu, ou null si aucune mise à jour n'a été effectuée
+     */
     public NiveauProcrastination checkNiveauProcrastinateur(Procrastinateur procrastinateur) {
         if (procrastinateur.getPointsAccumules() >= NiveauProcrastination.INTERMEDIAIRE.getPointsRequis() && procrastinateur.getNiveauProcrastination() != NiveauProcrastination.INTERMEDIAIRE) {
             procrastinateur.setNiveauProcrastination(NiveauProcrastination.INTERMEDIAIRE);
@@ -187,6 +209,15 @@ public class ProcrastinateurService {
         return null;
     }
 
+    /**
+     * Vérifie si un procrastinateur est éligible à un niveau de récompense donné en fonction
+     * de son ancienneté d'inscription et de ses points d'expérience accumulés.
+     *
+     * @param procrastinateur le procrastinateur dont l'éligibilité à la récompense est vérifiée
+     * @param niveau          le niveau de récompense requis contenant les critères d'éligibilité
+     * @return vrai si le procrastinateur remplit les conditions d'ancienneté et de points
+     * d'expérience requis; faux sinon
+     */
     public boolean checkAttributionRecompense(Procrastinateur procrastinateur, NiveauRecompense niveau) {
         LocalDate dateInscription = procrastinateur.getDateInscription();
 
@@ -197,10 +228,23 @@ public class ProcrastinateurService {
         return moisAnciennete >= niveau.getNombreDeMois() && pointsExperience >= niveau.getPointsAttribues();
     }
 
+    /**
+     * Récupère la liste des tâches à éviter pour le procrastinateur identifié par l'ID de l'utilisateur courant.
+     *
+     * @return une liste d'objets TacheAEviter associés à l'ID du procrastinateur actuellement connecté.
+     */
     public List<TacheAEviter> getTachesByProcrastinateurId() {
         return tachesAEviterRepository.findTacheAEviterByIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
     }
 
+    /**
+     * Gère la participation d'un utilisateur à un défi de procrastination.
+     * Valide l'éligibilité de l'utilisateur à rejoindre le défi et vérifie que les critères
+     * du défi (par ex. statut actif et limite de participants) sont respectés avant d'inscrire l'utilisateur.
+     *
+     * @param idDefi l'identifiant unique du défi auquel l'utilisateur souhaite participer
+     * @return une ResponseEntity
+     */
     public ResponseEntity<?> participerDefi(Long idDefi) {
         DefiProcrastination defi = defiProcrastinationRepository.findById(idDefi)
                 .orElseThrow();

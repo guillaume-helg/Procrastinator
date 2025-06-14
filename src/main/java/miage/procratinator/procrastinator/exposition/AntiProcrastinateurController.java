@@ -27,7 +27,7 @@ public class AntiProcrastinateurController {
      */
     @PostMapping("/creerPiegeProductivite")
     public ResponseEntity<?> creerPiegeProductivite(@RequestBody PiegeProductivite piegeProductivite) {
-        PiegeProductivite creePiegeProductivite = antiProcrastinateurService.creerPiegeProductivite(piegeProductivite.getIdPiegeProductivite(), piegeProductivite.getTitre(), piegeProductivite.getDescription());
+        PiegeProductivite creePiegeProductivite = antiProcrastinateurService.creerPiegeProductivite(piegeProductivite);
         return new ResponseEntity<>(creePiegeProductivite, HttpStatus.CREATED);
     }
 }
