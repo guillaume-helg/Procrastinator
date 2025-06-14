@@ -11,6 +11,7 @@ import lombok.Setter;
 import miage.procratinator.procrastinator.entities.enumeration.Categorie;
 import miage.procratinator.procrastinator.entities.enumeration.StatutExcuse;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -27,10 +28,9 @@ public class Excuse {
     private String situation;
     private int votesRecus;
     private Long idProcrastinateur;
-    private Date dateSoumission;
+    private LocalDate dateSoumission;
     private Categorie categorie;
-    private Date dateCreation;
+    private LocalDate dateCreation;
     private StatutExcuse statut;
-
 }
 
