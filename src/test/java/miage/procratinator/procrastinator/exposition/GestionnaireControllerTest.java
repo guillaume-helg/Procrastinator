@@ -2,18 +2,13 @@ package miage.procratinator.procrastinator.exposition;
 
 import miage.procratinator.procrastinator.entities.GrandConcours;
 import miage.procratinator.procrastinator.metier.GestionnaireService;
-import org.junit.jupiter.api.BeforeEach;
+import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -23,13 +18,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@WebMvcTest(GestionnaireController.class)
 public class GestionnaireControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+    @MockBean
     private GestionnaireService gestionnaireService;
+
+    @MockBean
+    private UtilisateurCourant utilisateurCourant;
 
     @Test
     void shouldCreateGrandConcourAnnuelSuccessfully() throws Exception {

@@ -128,9 +128,10 @@ public class ProcrastinateurService {
         procrastinateur.setPointsAccumules(procrastinateur.getPointsAccumules() + pointsGagnes);
         procrastinateurRepository.save(procrastinateur);
 
-        String passageNiveau = this.checkNiveauProcrastinateur(procrastinateur);
-
-        return ResponseEntity.status(HttpStatus.OK).body("Tâche evitée avec succès ! + " + pointsGagnes + " points !" + passageNiveau);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Tâche evitée avec succès ! + "
+                + pointsGagnes + " points !"
+                + this.checkNiveauProcrastinateur(procrastinateur));
     }
 
     /**
@@ -161,16 +162,17 @@ public class ProcrastinateurService {
      * @return le niveau de procrastination mis à jour si un changement a eu lieu, ou null si aucune mise à jour n'a été effectuée
      */
     public String checkNiveauProcrastinateur(Procrastinateur procrastinateur) {
+        String progression = "";
         for(NiveauProcrastination niveau : NiveauProcrastination.values()) {
             if(procrastinateur.getPointsAccumules() >= niveau.getPointsRequis()) {
                 if(procrastinateur.getNiveauProcrastination() != niveau) {
                     procrastinateur.setNiveauProcrastination(niveau);
                     procrastinateurRepository.save(procrastinateur);
-                    return "L'utilisateur vient d'évoluer au niveau : " + procrastinateur.getNiveauProcrastination();
+                    progression = "\nL'utilisateur vient d'évoluer au niveau : " + procrastinateur.getNiveauProcrastination();
                 }
             }
         }
-        return "L'utilisateur est au niveau : " + procrastinateur.getNiveauProcrastination() + "";
+        return progression;
     }
 
     /**
@@ -266,6 +268,7 @@ public class ProcrastinateurService {
         procrastinateurRepository.save(procrastinateur);
         participationDefiRepository.save(participationDefi);
 
-        return ResponseEntity.status(HttpStatus.OK).body("Défi valider !!! "+ defi.getPointsAGagner() + " points !" + "\n " + checkNiveauProcrastinateur(procrastinateur));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Défi valider !!! "+ defi.getPointsAGagner() + " points !" + checkNiveauProcrastinateur(procrastinateur));
     }
 }

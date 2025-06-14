@@ -8,6 +8,7 @@ import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastina
 import miage.procratinator.procrastinator.entities.enumeration.Statut;
 import miage.procratinator.procrastinator.entities.enumeration.Type;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -27,10 +28,8 @@ public class PiegeProductivite {
     @ManyToOne
     @JoinColumn(name = "idRecompense")
     private Recompense recompense;
-    private Date dateCreation;
+    private LocalDate dateCreation;
     private Statut statut;
-
-
 }
 
 
