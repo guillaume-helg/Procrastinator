@@ -46,6 +46,13 @@ public class ProcrastinateurController {
         return procrastinateurService.participerDefi(idDefi);
     }
 
+    @PostMapping("/validerDefi/{idDefi}")
+    public ResponseEntity<?> validerDefiProcrastination(@PathVariable Long idDefi) {
+        return procrastinateurService.validerDefi(idDefi);
+    }
+
+
+
 
     public void eviterPiegeProductivite() {
 
