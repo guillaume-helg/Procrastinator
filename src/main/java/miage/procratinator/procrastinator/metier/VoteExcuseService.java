@@ -1,11 +1,9 @@
 package miage.procratinator.procrastinator.metier;
 
 import miage.procratinator.procrastinator.dao.ExcuseRepository;
-import miage.procratinator.procrastinator.dao.UtilisateurRepository;
 import miage.procratinator.procrastinator.dao.VoteExcuseRepository;
 import miage.procratinator.procrastinator.entities.*;
 import miage.procratinator.procrastinator.entities.enumeration.StatutExcuse;
-import miage.procratinator.procrastinator.entities.enumeration.StatutTache;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

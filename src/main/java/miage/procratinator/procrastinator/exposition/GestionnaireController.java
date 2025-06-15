@@ -3,6 +3,7 @@ package miage.procratinator.procrastinator.exposition;
 import miage.procratinator.procrastinator.entities.AntiProcrastinateur;
 import miage.procratinator.procrastinator.entities.DefiProcrastination;
 import miage.procratinator.procrastinator.entities.GrandConcours;
+import miage.procratinator.procrastinator.entities.Recompense;
 import miage.procratinator.procrastinator.metier.GestionnaireService;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,54 +15,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/gestionnaire")
+@RequestMapping("/api/gestionnaires")
 public class GestionnaireController {
 
     @Autowired
     private GestionnaireService gestionnaireService;
 
-    @Autowired
-    private UtilisateurCourant utilisateurCourant;
-
-    /**
-     * Inscrit un nouvel antiprocrastinateur.
-     * Reçoit les infos dans la requête, crée l'utilisateur avec son pseudo,
-     * puis retourne l'antiprocrastinateur créé avec le code 201
-     *
-     * @param antiProcrastinateur les infos de l'antiprocrastinateur à créer
-     * @return l'utilisateur créé avec un code 201
-     */
-    @PostMapping("/inscrire-antiprocrastinateur")
+    @PostMapping("/antiprocrastinateurs")
     public ResponseEntity<AntiProcrastinateur> inscrireAntiprocrastinateur(@RequestBody AntiProcrastinateur antiProcrastinateur) {
+        if (antiProcrastinateur == null || antiProcrastinateur.getPseudo().isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         AntiProcrastinateur createdAntiprocrastinateur = gestionnaireService.creerAntiProcrastinateur(antiProcrastinateur);
         return new ResponseEntity<>(createdAntiprocrastinateur, HttpStatus.CREATED);
     }
 
-    /**
-     * Crée un nouveau défi de procrastination
-     * Reçoit les infos du défi (ID et titre) dans la requête
-     * le crée via le service, puis retourne le défi créé avec le code 201
-     *
-     * @param defiProcrastination les infos du défi à créer
-     * @return le défi créé avec un code 201 (CREATED)
-     */
-    @PostMapping("/creer-defi")
+    @PostMapping("/defis")
     public ResponseEntity<DefiProcrastination> creerDefiProcrastination(@RequestBody DefiProcrastination defiProcrastination) {
-        DefiProcrastination creeDefiProcrastination = gestionnaireService.creerDefiProcrastinateur(defiProcrastination);
-        return new ResponseEntity<>(creeDefiProcrastination, HttpStatus.CREATED);
+        DefiProcrastination createdDefiProcrastination = gestionnaireService.creerDefiProcrastinateur(defiProcrastination);
+        return new ResponseEntity<>(createdDefiProcrastination, HttpStatus.CREATED);
     }
 
-    /**
-     * Crée un nouveau grand concours annuel.
-     * Reçoit les infos du concours dans la requête, le crée via le service,
-     * puis retourne le concours créé avec le code 201
-     *
-     * @param grandConcours les infos du grand concours à créer
-     * @return le concours créé avec un code 201
-     */
-    @PostMapping("/organiser-grand-concours")
-    public ResponseEntity<GrandConcours> creerGrandConcourAnnuel(@RequestBody GrandConcours grandConcours) {
-        GrandConcours saved = gestionnaireService.creerGrandConcours(grandConcours);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    @PostMapping("/concours")
+    public ResponseEntity<GrandConcours> creerGrandConcoursAnnuel(@RequestBody GrandConcours grandConcours) {
+        GrandConcours savedConcours = gestionnaireService.creerGrandConcours(grandConcours);
+        return new ResponseEntity<>(savedConcours, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/recompense")
+    public ResponseEntity<Recompense> creerRecompense(@RequestBody Recompense recompense) {
+        Recompense savedRecompense = gestionnaireService.creerRecompense(recompense);
+        return new ResponseEntity<>(savedRecompense, HttpStatus.CREATED);
     }
 }

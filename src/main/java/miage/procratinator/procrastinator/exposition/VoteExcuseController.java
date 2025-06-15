@@ -27,7 +27,7 @@ public class VoteExcuseController {
     }
 
     @PostMapping("/voter/{id}")
-    public ResponseEntity<?> voterExcuse(@PathVariable Long idExcuse) {
-        return voteExcuseService.updateVoteExcuse(idExcuse);
+    public ResponseEntity<?> voterExcuse(@PathVariable Long id) {
+        return voteExcuseService.updateVoteExcuse(id);
     }
 }

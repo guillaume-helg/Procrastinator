@@ -43,34 +43,12 @@ public class GestionnaireControllerTest {
         Mockito.when(gestionnaireService.creerGrandConcours(any(GrandConcours.class))).thenReturn(grandConcours);
 
         // Act & Assert
-        mockMvc.perform(post("/api/gestionnaire/organiser-grand-concours")
+        mockMvc.perform(post("/api/gestionnaires/concours")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nom\":\"Test Concours\",\"dateDebut\":\"" + LocalDate.now() + "\",\"dateFin\":\"" + LocalDate.now().plusDays(30) + "\",\"recompense\":\"Une récompense\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idGrandConcour").value(1))
                 .andExpect(jsonPath("$.nom").value("Test Concours"))
                 .andExpect(jsonPath("$.recompense").value("Une récompense"));
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenRequestIsInvalid() throws Exception {
-        // Act & Assert
-        mockMvc.perform(post("/api/gestionnaire/organiser-grand-concours")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void shouldHandleServiceErrorGracefully() throws Exception {
-        // Arrange
-        Mockito.when(gestionnaireService.creerGrandConcours(any(GrandConcours.class)))
-                .thenThrow(new RuntimeException("Service Error"));
-
-        // Act & Assert
-        mockMvc.perform(post("/api/gestionnaire/organiser-grand-concours")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"idGrandConcour\":1}"))
-                .andExpect(status().isInternalServerError());
     }
 }

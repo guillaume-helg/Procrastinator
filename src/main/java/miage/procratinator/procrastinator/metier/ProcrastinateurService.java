@@ -15,8 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
+
+import static miage.procratinator.procrastinator.utilities.Utilitaires.calculerDifferenceEntreDate;
 
 
 @Service
@@ -147,8 +148,7 @@ public class ProcrastinateurService {
         int pointsJoursDeRetard = 0;
 
         if (LocalDate.now().isAfter(tache.getDateLimite())) {
-            int joursDeRetard = (int) ChronoUnit.DAYS.between(tache.getDateLimite(), LocalDate.now());
-            pointsJoursDeRetard = joursDeRetard * 5;
+            pointsJoursDeRetard = calculerDifferenceEntreDate(tache.getDateLimite(), LocalDate.now()).getDays() * 5;
         }
         return Math.min(pointsDegreUrgence + pointsJoursDeRetard, 200);
     }

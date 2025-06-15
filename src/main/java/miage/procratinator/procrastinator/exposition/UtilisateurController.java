@@ -24,7 +24,7 @@ public class UtilisateurController {
      * @return une réponse HTTP contenant l'objet Utilisateur créé ou existant, et le statut HTTP 201 (Created)
      */
     @PostMapping
-    public ResponseEntity<Utilisateur> creerUtilisateur(@RequestBody Utilisateur utilisateur) {
+    public ResponseEntity<Utilisateur> createUser(@RequestBody Utilisateur utilisateur) {
         Utilisateur saved = utilisateurService.creerUtilisateur(utilisateur);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
@@ -35,7 +35,7 @@ public class UtilisateurController {
      * @return un ResponseEntity contenant une liste de tous les utilisateurs existants
      */
     @GetMapping
-    public ResponseEntity<List<Utilisateur>> getAll() {
+    public ResponseEntity<List<Utilisateur>> getAllUsers() {
         return ResponseEntity.ok(utilisateurService.findAll());
     }
 
@@ -46,7 +46,7 @@ public class UtilisateurController {
      * @return un ResponseEntity contenant l'objet Utilisateur si trouvé, ou une réponse HTTP avec le statut 404 (Not Found) si l'utilisateur n'existe pas
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Utilisateur> getById(@PathVariable Long id) {
+    public ResponseEntity<Utilisateur> getUserById(@PathVariable Long id) {
         return utilisateurService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -61,22 +61,7 @@ public class UtilisateurController {
      * @return un ResponseEntity contenant l'objet Utilisateur mis à jour
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Utilisateur> update(@PathVariable Long id, @RequestBody Utilisateur utilisateur) {
+    public ResponseEntity<Utilisateur> updateUserById(@PathVariable Long id, @RequestBody Utilisateur utilisateur) {
         return ResponseEntity.ok(utilisateurService.update(id, utilisateur));
     }
-
-    /**
-     * Supprime un utilisateur en fonction de son identifiant unique.
-     *
-     * @param id l'identifiant unique de l'utilisateur à supprimer
-     * @return une réponse HTTP sans contenu avec le statut 204 (No Content) si l'opération est réussie
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        utilisateurService.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }
-
-
-
 }

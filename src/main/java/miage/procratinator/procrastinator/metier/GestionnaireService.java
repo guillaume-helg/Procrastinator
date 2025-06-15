@@ -3,9 +3,11 @@ package miage.procratinator.procrastinator.metier;
 import miage.procratinator.procrastinator.dao.AntiProcrastinateurRepository;
 import miage.procratinator.procrastinator.dao.DefiProcrastinationRepository;
 import miage.procratinator.procrastinator.dao.GrandConcoursRepository;
+import miage.procratinator.procrastinator.dao.RecompenseRepository;
 import miage.procratinator.procrastinator.entities.AntiProcrastinateur;
 import miage.procratinator.procrastinator.entities.DefiProcrastination;
 import miage.procratinator.procrastinator.entities.GrandConcours;
+import miage.procratinator.procrastinator.entities.Recompense;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class GestionnaireService {
     private GrandConcoursRepository grandConcoursRepository;
 
     @Autowired
+    private RecompenseRepository recompenseRepository;
+
+    @Autowired
     private UtilisateurCourant utilisateurCourant;
 
     /**
@@ -43,10 +48,6 @@ public class GestionnaireService {
      * 3. Si un existe déjà, retourne l'instance existante (prend le premier si plusieurs existent)
      */
     public AntiProcrastinateur creerAntiProcrastinateur(AntiProcrastinateur antiProcrastinateur) {
-        if (antiProcrastinateur == null) {
-            throw new IllegalArgumentException("L'antiProcrastinateur ne peut pas être null");
-        }
-        
         return antiProcrastinateurRepository
                 .findByPseudo(antiProcrastinateur.getPseudo())
                 .stream()
@@ -111,6 +112,21 @@ public class GestionnaireService {
                     GrandConcours nouveauConcours = new GrandConcours();
                     BeanUtils.copyProperties(grandConcour, nouveauConcours);
                     return grandConcoursRepository.save(nouveauConcours);
+                });
+    }
+
+    public Recompense creerRecompense(Recompense recompense) {
+        if (recompense == null) {
+            throw new IllegalArgumentException("Le grand concours ne peut pas être null");
+        }
+
+        return recompenseRepository.findRecompenseByIdRecompense(recompense.getIdRecompense())
+                .stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    GrandConcours nouveauConcours = new GrandConcours();
+                    BeanUtils.copyProperties(recompense, nouveauConcours);
+                    return recompenseRepository.save(recompense);
                 });
     }
 }
