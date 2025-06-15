@@ -9,4 +9,5 @@ public interface TachesAEviterRepository extends CrudRepository<TacheAEviter, Lo
     List<TacheAEviter> findTacheAEviterByDescription(String description);
 
     List<TacheAEviter> findTacheAEviterByIdProcrastinateur(Long idProcrastinateur);
+    List<TacheAEviter> findTacheAEviterByIdTacheAEviter(Long idTache);
 }

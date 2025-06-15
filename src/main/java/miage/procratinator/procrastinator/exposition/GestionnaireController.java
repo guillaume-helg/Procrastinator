@@ -5,7 +5,6 @@ import miage.procratinator.procrastinator.entities.DefiProcrastination;
 import miage.procratinator.procrastinator.entities.GrandConcours;
 import miage.procratinator.procrastinator.entities.Recompense;
 import miage.procratinator.procrastinator.metier.GestionnaireService;
-import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

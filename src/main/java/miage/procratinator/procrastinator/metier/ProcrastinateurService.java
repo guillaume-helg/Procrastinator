@@ -77,7 +77,7 @@ public class ProcrastinateurService {
             throw new IllegalArgumentException("tacheAEviter est null");
         }
 
-        return tachesAEviterRepository.findTacheAEviterByDescription(tacheAEviter.getDescription()).stream().findFirst().orElseGet(
+        return tachesAEviterRepository.findTacheAEviterByIdTacheAEviter(tacheAEviter.getIdTacheAEviter()).stream().findFirst().orElseGet(
                 () -> {
                     tacheAEviter.setIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
                     tacheAEviter.setDateCreation(LocalDate.now());
@@ -97,7 +97,7 @@ public class ProcrastinateurService {
      * @return un ResponseEntity contenant le résultat de l'opération de mise à jour
      */
     public ResponseEntity<?> updateStatutTache(TacheAEviter bodyTacheAEviter) {
-        List<TacheAEviter> tacheAEviters = tachesAEviterRepository.findTacheAEviterByDescription(bodyTacheAEviter.getDescription());
+        List<TacheAEviter> tacheAEviters = tachesAEviterRepository.findTacheAEviterByIdTacheAEviter(bodyTacheAEviter.getIdTacheAEviter());
         StatutTache nouveauStatut = bodyTacheAEviter.getStatut();
         TacheAEviter tacheAEviter = tacheAEviters.getFirst();
 
