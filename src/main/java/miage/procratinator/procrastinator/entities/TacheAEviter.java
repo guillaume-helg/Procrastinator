@@ -28,12 +28,6 @@ public class TacheAEviter {
 
     private LocalDate dateLimite;
 
-    /*
-    @OneToOne
-    @JoinColumn(name = "idConsequence")
-    private Consequence consequence;
-     */
-
     private String consequence;
 
     @Enumerated(EnumType.STRING)

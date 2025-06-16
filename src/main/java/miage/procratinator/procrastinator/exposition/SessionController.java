@@ -28,16 +28,15 @@ public class SessionController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String email, HttpSession session) {
-        List<Utilisateur> utilisateurs = utilisateurRepository.findUtilisateurByMail(email);
-
-        if (utilisateurs.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email inconnu");
-        }
-
-        Utilisateur utilisateur = utilisateurs.getFirst();
-        session.setAttribute("utilisateur", utilisateur);
-
-        return ResponseEntity.ok(utilisateur);
+        return utilisateurRepository.findUtilisateurByMail(email)
+                .stream()
+                .findFirst()
+                .map(utilisateur -> {
+                    session.setAttribute("utilisateur", utilisateur);
+                    return ResponseEntity.ok("" + utilisateur);
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Email inconnu"));
     }
 
     /**

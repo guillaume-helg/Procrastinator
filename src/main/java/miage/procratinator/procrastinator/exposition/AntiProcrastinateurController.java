@@ -5,10 +5,7 @@ import miage.procratinator.procrastinator.metier.AntiprocrastinateurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/antiprocrastinateur")
@@ -29,5 +26,15 @@ public class AntiProcrastinateurController {
     public ResponseEntity<?> creerPiegeProductivite(@RequestBody PiegeProductivite piegeProductivite) {
         PiegeProductivite creePiegeProductivite = antiProcrastinateurService.creerPiegeProductivite(piegeProductivite);
         return new ResponseEntity<>(creePiegeProductivite, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/analyse/{id}")
+    public ResponseEntity<?> getAnalyse(@PathVariable Long idUtilisateur) {
+        return new ResponseEntity<>(antiProcrastinateurService.getAnalyse(idUtilisateur), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/analyse")
+    public ResponseEntity<?> getAnalyse() {
+        return new ResponseEntity<>(antiProcrastinateurService.getAnalyse(), HttpStatus.CREATED);
     }
 }

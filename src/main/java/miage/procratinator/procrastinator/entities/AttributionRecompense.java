@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import miage.procratinator.procrastinator.entities.enumeration.Statut;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -22,8 +23,8 @@ public class AttributionRecompense {
     private Long idAttributionRecompense;
     private Long idRecompense;
     private Long idProcrastinateur;
-    private Date dateObtention;
-    private Date dateExpiration;
+    private LocalDate dateObtention;
+    private LocalDate dateExpiration;
     private String contexte;
     private Statut statut;
 }

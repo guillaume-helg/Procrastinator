@@ -1,7 +1,11 @@
 package miage.procratinator.procrastinator.utilities;
 
+import miage.procratinator.procrastinator.dao.RecompenseRepository;
 import miage.procratinator.procrastinator.dao.UtilisateurRepository;
+import miage.procratinator.procrastinator.entities.Recompense;
 import miage.procratinator.procrastinator.entities.Utilisateur;
+import miage.procratinator.procrastinator.entities.enumeration.NiveauRecompense;
+import miage.procratinator.procrastinator.entities.enumeration.TypeRecompense;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +23,7 @@ public class DataInitializer {
      * @return une instance de CommandLineRunner qui exécute la logique d'initialisation au démarrage de l'application
      */
     @Bean
-    CommandLineRunner initGestionnaire(UtilisateurRepository utilisateurRepository) {
+    CommandLineRunner initGestionnaire(UtilisateurRepository utilisateurRepository, RecompenseRepository recompenseRepository) {
         return args -> {
             String email = "gestionnaire@procrastinapp.fr";
             if (utilisateurRepository.findUtilisateurByMail(email).isEmpty()) {
@@ -30,6 +34,13 @@ public class DataInitializer {
                 utilisateurRepository.save(gestionnaire);
                 System.out.println("Creation du Big Boss");
             }
+
+            Recompense recompense = new Recompense();
+            recompense.setNiveauRecompense(NiveauRecompense.PAPIER_MACHE);
+            recompense.setTitre("Procrastinateur en Danger");
+            recompense.setDescription("Tombe dans un piège");
+            recompense.setConditionObtention("Tombe dans un piege");
+            recompense.setTypeRecompense(TypeRecompense.BADGE);
         };
     }
 }

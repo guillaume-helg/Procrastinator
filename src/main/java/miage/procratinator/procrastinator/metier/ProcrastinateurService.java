@@ -1,9 +1,6 @@
 package miage.procratinator.procrastinator.metier;
 
-import miage.procratinator.procrastinator.dao.DefiProcrastinationRepository;
-import miage.procratinator.procrastinator.dao.ParticipationDefiRepository;
-import miage.procratinator.procrastinator.dao.ProcrastinateurRepository;
-import miage.procratinator.procrastinator.dao.TachesAEviterRepository;
+import miage.procratinator.procrastinator.dao.*;
 import miage.procratinator.procrastinator.entities.*;
 import miage.procratinator.procrastinator.entities.enumeration.*;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
@@ -36,7 +33,16 @@ public class ProcrastinateurService {
     private ParticipationDefiRepository participationDefiRepository;
 
     @Autowired
+    private PiegeProductiviteRepository piegeProductiviteRepository;
+    
+    @Autowired
+    private AttributionRecompenseRepository attributionRecompenseRepository;
+
+    @Autowired
     private UtilisateurCourant utilisateurCourant;
+
+    @Autowired
+    private GestionnaireService gestionnaireService;
 
     /**
      * Crée un procrastinateur s'il n'existe pas déjà via son ID utilisateur
@@ -258,7 +264,7 @@ public class ProcrastinateurService {
         DefiProcrastination defi = defiProcrastinationRepository.findByIdDefiProcrastination(idDefi).stream().findFirst().orElseThrow(
                 () -> new IllegalArgumentException("Id defi inexistant")
         );
-
+        
         participationDefi.setStatutParticipationDefi(StatutParticipationDefi.TERMINE);
         defi.setStatut(Statut.INACTIF);
         procrastinateur.setPointsAccumules(procrastinateur.getPointsAccumules() + defi.getPointsAGagner());
@@ -270,5 +276,31 @@ public class ProcrastinateurService {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Défi valider !!! "+ defi.getPointsAGagner() + " points !" + checkNiveauProcrastinateur(procrastinateur));
+    }
+
+    public String eviterLePiege(Long idPiege) throws IllegalArgumentException {
+        piegeProductiviteRepository.findByIdPiegeProductivite(idPiege).stream().findFirst().orElseThrow(
+                () -> new IllegalArgumentException("Id piege inexistant")
+        );
+
+        Procrastinateur procrastinateur = procrastinateurRepository.findProcrastinateurByMail(utilisateurCourant.getUtilisateurConnecte().getMail()).stream().findFirst().orElseThrow();
+        procrastinateur.setPointsAccumules(procrastinateur.getPointsAccumules() + 50);
+        checkNiveauProcrastinateur(procrastinateur);
+
+        return "Piège évité avec succès";
+    }
+
+    public String tomberDansPiege(Long idPiege) {
+        piegeProductiviteRepository.findByIdPiegeProductivite(idPiege).stream().findFirst().orElseThrow(
+                () -> new IllegalArgumentException("Id piege inexistant")
+        );
+
+        Procrastinateur procrastinateur = procrastinateurRepository.findProcrastinateurByMail(utilisateurCourant.getUtilisateurConnecte().getMail()).stream().findFirst().orElseThrow();
+        procrastinateur.setPointsAccumules(procrastinateur.getPointsAccumules() - 50);
+        gestionnaireService.attribuerRecompense(1L, utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
+        checkNiveauProcrastinateur(procrastinateur);
+        procrastinateurRepository.save(procrastinateur);
+
+        return "Tu es tombé dans un piège";
     }
 }

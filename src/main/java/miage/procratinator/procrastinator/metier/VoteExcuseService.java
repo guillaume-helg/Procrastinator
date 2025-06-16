@@ -42,7 +42,7 @@ public class VoteExcuseService {
                 .findFirst()
                 .orElseGet(() -> {
                     Excuse nouvelleExcuse = new Excuse();
-                    excuse.setDateCreation(LocalDate.now());
+                    excuse.setDateSoumission(LocalDate.now());
                     excuse.setIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
                     excuse.setStatut(StatutExcuse.EN_ATTENTE);
                     BeanUtils.copyProperties(excuse, nouvelleExcuse);
@@ -55,7 +55,6 @@ public class VoteExcuseService {
             .sorted((e1, e2) -> Integer.compare(e2.getVotesRecus(), e1.getVotesRecus()))
             .toList();
     }
-
 
     public ResponseEntity<?> updateVoteExcuse(Long idExcuse) {
         if (idExcuse == null) {
@@ -72,8 +71,9 @@ public class VoteExcuseService {
                     excuse.setVotesRecus(excuse.getVotesRecus() + 1);
                     excuseRepository.save(excuse);
                     voteExcuseRepository.save(
-                            new VoteExcuse(0L, idExcuse,
+                            new VoteExcuse(null,
                                     utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur(),
+                                    idExcuse,
                                     LocalDate.now()));
                     return ResponseEntity.ok("+1 vote");
                 })
@@ -81,6 +81,6 @@ public class VoteExcuseService {
     }
 
     private boolean utilisateurDejaVoter(Long idUtilisateur, Long idExcuse) {
-        return voteExcuseRepository.findVoteExcuseByIdUtilisateurAndIdExcuse(idUtilisateur, idUtilisateur).stream().findFirst().isPresent();
+        return voteExcuseRepository.findVoteExcuseByIdUtilisateurAndIdExcuse(idUtilisateur, idExcuse).stream().findFirst().isPresent();
     }
 }

@@ -51,7 +51,13 @@ public class ProcrastinateurController {
         return procrastinateurService.validerDefi(idDefi);
     }
 
-    public void eviterPiegeProductivite() {
+    @PostMapping("/eviter/{idPiege}")
+    public String eviterPiegeProductivite(@PathVariable Long idPiege) {
+        return procrastinateurService.eviterLePiege(idPiege);
+    }
 
+    @PostMapping("/tomber/{idPiege}")
+    public String tomberPiegeProductivite(@PathVariable Long idPiege) {
+        return procrastinateurService.tomberDansPiege(idPiege);
     }
 }

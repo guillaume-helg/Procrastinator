@@ -12,13 +12,11 @@ import miage.procratinator.procrastinator.entities.enumeration.Categorie;
 import miage.procratinator.procrastinator.entities.enumeration.StatutExcuse;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-
 public class Excuse {
 
     @Id
@@ -28,9 +26,8 @@ public class Excuse {
     private String situation;
     private int votesRecus;
     private Long idProcrastinateur;
-    private LocalDate dateSoumission;
     private Categorie categorie;
-    private LocalDate dateCreation;
+    private LocalDate dateSoumission;
     private StatutExcuse statut;
 }
 

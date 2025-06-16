@@ -1,19 +1,17 @@
 package miage.procratinator.procrastinator.metier;
 
-import miage.procratinator.procrastinator.dao.AntiProcrastinateurRepository;
-import miage.procratinator.procrastinator.dao.DefiProcrastinationRepository;
-import miage.procratinator.procrastinator.dao.GrandConcoursRepository;
-import miage.procratinator.procrastinator.dao.RecompenseRepository;
-import miage.procratinator.procrastinator.entities.AntiProcrastinateur;
-import miage.procratinator.procrastinator.entities.DefiProcrastination;
-import miage.procratinator.procrastinator.entities.GrandConcours;
-import miage.procratinator.procrastinator.entities.Recompense;
+import miage.procratinator.procrastinator.dao.*;
+import miage.procratinator.procrastinator.entities.*;
+import miage.procratinator.procrastinator.entities.enumeration.Statut;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static miage.procratinator.procrastinator.utilities.Utilitaires.calculerDifferenceEntreDate;
@@ -35,6 +33,9 @@ public class GestionnaireService {
 
     @Autowired
     private UtilisateurCourant utilisateurCourant;
+
+    @Autowired
+    private AttributionRecompenseRepository attributionRecompenseRepository;
 
     /**
      * Crée ou récupère un utilisateur AntiProcrastinateur basé sur le pseudo fourni.
@@ -128,5 +129,22 @@ public class GestionnaireService {
                     BeanUtils.copyProperties(recompense, nouveauConcours);
                     return recompenseRepository.save(recompense);
                 });
+    }
+
+    public ResponseEntity<AttributionRecompense> attribuerRecompense(Long idRecompense, Long idProcrastinateur) {
+        if (idRecompense == null) {
+            throw new IllegalArgumentException("idRecompense ne peut pas être null");
+        }
+
+        if (idProcrastinateur == null) {
+            throw new IllegalArgumentException("idProcrastinateur ne peut pas être null");
+        }
+
+        AttributionRecompense attributionRecompense = new AttributionRecompense();
+        attributionRecompense.setIdRecompense(idRecompense);
+        attributionRecompense.setIdProcrastinateur(idProcrastinateur);
+        attributionRecompense.setStatut(Statut.ACTIF);
+        attributionRecompense.setDateObtention(LocalDate.now());
+        return ResponseEntity.ok(attributionRecompenseRepository.save(attributionRecompense));
     }
 }

@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface PiegeProductiviteRepository extends CrudRepository<PiegeProductivite, Long> {
     List<PiegeProductivite> findByIdPiegeProductivite(Long idPiegeProductivite);
+    List<PiegeProductivite> findAll();
 
 }

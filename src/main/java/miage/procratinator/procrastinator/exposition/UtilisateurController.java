@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/utilisateur")
+@RequestMapping("/api/utilisateurs")
 public class UtilisateurController {
 
     @Autowired
@@ -24,44 +24,17 @@ public class UtilisateurController {
      * @return une réponse HTTP contenant l'objet Utilisateur créé ou existant, et le statut HTTP 201 (Created)
      */
     @PostMapping
-    public ResponseEntity<Utilisateur> createUser(@RequestBody Utilisateur utilisateur) {
-        Utilisateur saved = utilisateurService.creerUtilisateur(utilisateur);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    public Utilisateur creerUtilisateur(@RequestBody Utilisateur utilisateur) {
+        return utilisateurService.creerUtilisateur(utilisateur);
     }
 
     /**
      * Récupère tous les objets Utilisateur disponibles dans le système.
      *
-     * @return un ResponseEntity contenant une liste de tous les utilisateurs existants
+     * @return une liste de tous les utilisateurs existants
      */
     @GetMapping
-    public ResponseEntity<List<Utilisateur>> getAllUsers() {
-        return ResponseEntity.ok(utilisateurService.findAll());
-    }
-
-    /**
-     * Récupère un utilisateur par son identifiant unique.
-     *
-     * @param id l'identifiant unique de l'utilisateur à récupérer
-     * @return un ResponseEntity contenant l'objet Utilisateur si trouvé, ou une réponse HTTP avec le statut 404 (Not Found) si l'utilisateur n'existe pas
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<Utilisateur> getUserById(@PathVariable Long id) {
-        return utilisateurService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    /**
-     * Met à jour un utilisateur existant en fonction de son identifiant et des nouvelles informations fournies.
-     * Si l'utilisateur avec l'identifiant donné n'est pas trouvé, une exception est levée.
-     *
-     * @param id l'identifiant unique de l'utilisateur à mettre à jour
-     * @param utilisateur l'objet Utilisateur contenant les nouvelles données à mettre à jour
-     * @return un ResponseEntity contenant l'objet Utilisateur mis à jour
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<Utilisateur> updateUserById(@PathVariable Long id, @RequestBody Utilisateur utilisateur) {
-        return ResponseEntity.ok(utilisateurService.update(id, utilisateur));
+    public List<Utilisateur> getUtilisateurs() {
+        return utilisateurService.findAll();
     }
 }

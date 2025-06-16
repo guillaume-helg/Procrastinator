@@ -1,17 +1,11 @@
 package miage.procratinator.procrastinator.exposition;
 
-import miage.procratinator.procrastinator.entities.AntiProcrastinateur;
-import miage.procratinator.procrastinator.entities.DefiProcrastination;
-import miage.procratinator.procrastinator.entities.GrandConcours;
-import miage.procratinator.procrastinator.entities.Recompense;
+import miage.procratinator.procrastinator.entities.*;
 import miage.procratinator.procrastinator.metier.GestionnaireService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/gestionnaires")
@@ -44,5 +38,11 @@ public class GestionnaireController {
     public ResponseEntity<Recompense> creerRecompense(@RequestBody Recompense recompense) {
         Recompense savedRecompense = gestionnaireService.creerRecompense(recompense);
         return new ResponseEntity<>(savedRecompense, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/recompense/{id}/to/{idUtilisateur}")
+    public ResponseEntity<AttributionRecompense> attribuerRecompense(@PathVariable Long idRecompense, @PathVariable Long idProcrastinateur) {
+        AttributionRecompense attributionRecompense = gestionnaireService.attribuerRecompense(idRecompense, idProcrastinateur).getBody();
+        return new ResponseEntity<>(attributionRecompense, HttpStatus.CREATED);
     }
 }

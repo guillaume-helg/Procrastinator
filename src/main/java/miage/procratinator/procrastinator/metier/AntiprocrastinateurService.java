@@ -6,9 +6,11 @@ import miage.procratinator.procrastinator.entities.enumeration.Statut;
 import miage.procratinator.procrastinator.utilities.UtilisateurCourant;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class AntiprocrastinateurService {
@@ -41,5 +43,45 @@ public class AntiprocrastinateurService {
                     BeanUtils.copyProperties(piegeProductivite, nouveauPiege);
                     return piegeProductiviteRepository.save(nouveauPiege);
                 });
+    }
+
+    /**
+     *
+     */
+    public ResponseEntity<?> getAnalyse(Long idUtilisateur) {
+        if (idUtilisateur == null) {
+            throw new IllegalArgumentException("L'utilisateur peut pas être null");
+        }
+
+        List<PiegeProductivite> pieges = piegeProductiviteRepository.findAll();
+        long totalPieges = pieges.stream()
+                .filter(p -> p.getIdAntiProcrastinateur().equals(idUtilisateur))
+                .count();
+
+        if (totalPieges == 0) {
+            return ResponseEntity.ok("Aucun piège créé pour cet utilisateur");
+        }
+
+        long piegesActifs = pieges.stream()
+                .filter(p -> p.getIdAntiProcrastinateur().equals(idUtilisateur))
+                .filter(p -> p.getStatut() == Statut.ACTIF)
+                .count();
+
+        return ResponseEntity.ok("Total pièges : " + totalPieges + ", Pièges actifs : " + piegesActifs);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ResponseEntity<?> getAnalyse() {
+        List<PiegeProductivite> pieges = piegeProductiviteRepository.findAll();
+        long totalPieges = pieges.size();
+
+        long piegesActifs = pieges.stream()
+                .filter(p -> p.getStatut() == Statut.ACTIF)
+                .count();
+
+        return ResponseEntity.ok("Total pièges : " + totalPieges + ", Pièges actifs : " + piegesActifs);
     }
 }
