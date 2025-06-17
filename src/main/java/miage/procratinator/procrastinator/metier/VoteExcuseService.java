@@ -27,7 +27,7 @@ public class VoteExcuseService {
     private VoteExcuseRepository voteExcuseRepository;
 
     
-    public Excuse createExcuse(Excuse excuse) {
+    public Excuse creerExcuse(Excuse excuse) {
         if (excuse == null) {
             throw new IllegalArgumentException("L'excuse ne peut pas être null");
         }

@@ -15,8 +15,8 @@ public class VoteExcuseController {
     private VoteExcuseService voteExcuseService;
 
     @PostMapping("/cree")
-    public ResponseEntity<Excuse> createExcuse(@RequestBody Excuse excuse) {
-        Excuse savedExcuse = voteExcuseService.createExcuse(excuse);
+    public ResponseEntity<Excuse> creerExcuse(@RequestBody Excuse excuse) {
+        Excuse savedExcuse = voteExcuseService.creerExcuse(excuse);
         return new ResponseEntity<>(savedExcuse, HttpStatus.CREATED);
     }
 

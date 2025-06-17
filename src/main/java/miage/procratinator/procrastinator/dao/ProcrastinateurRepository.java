@@ -9,4 +9,6 @@ public interface ProcrastinateurRepository extends CrudRepository<Procrastinateu
     List<Procrastinateur> findProcrastinateurByMail(String email);
 
     List<Procrastinateur> findProcrastinateurByPseudo(String pseudo);
+
+    List<Procrastinateur> findProcrastinateurByIdUtilisateur(Long idUtilisateur);
 }

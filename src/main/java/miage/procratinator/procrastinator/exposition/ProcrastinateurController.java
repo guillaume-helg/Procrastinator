@@ -60,4 +60,14 @@ public class ProcrastinateurController {
     public String tomberPiegeProductivite(@PathVariable Long idPiege) {
         return procrastinateurService.tomberDansPiege(idPiege);
     }
+
+    @PostMapping("/validerExcuse/{id}")
+    public ResponseEntity<?> validerExcuse(@PathVariable Long id) {
+        return new ResponseEntity<>(procrastinateurService.validerExcuse(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/rejeterExcuse/{id}")
+    public ResponseEntity<?> rejeterExcuse(@PathVariable Long id) {
+        return new ResponseEntity<>(procrastinateurService.rejeterExcuse(id), HttpStatus.OK);
+    }
 }

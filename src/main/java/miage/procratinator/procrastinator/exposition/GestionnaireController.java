@@ -40,7 +40,7 @@ public class GestionnaireController {
         return new ResponseEntity<>(savedRecompense, HttpStatus.CREATED);
     }
 
-    @PostMapping("/recompense/{id}/to/{idUtilisateur}")
+    @PostMapping("/recompense/{idRecompense}/to/{idProcrastinateur}")
     public ResponseEntity<AttributionRecompense> attribuerRecompense(@PathVariable Long idRecompense, @PathVariable Long idProcrastinateur) {
         AttributionRecompense attributionRecompense = gestionnaireService.attribuerRecompense(idRecompense, idProcrastinateur).getBody();
         return new ResponseEntity<>(attributionRecompense, HttpStatus.CREATED);

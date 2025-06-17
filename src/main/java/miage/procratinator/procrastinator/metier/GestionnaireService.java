@@ -145,6 +145,8 @@ public class GestionnaireService {
         attributionRecompense.setIdProcrastinateur(idProcrastinateur);
         attributionRecompense.setStatut(Statut.ACTIF);
         attributionRecompense.setDateObtention(LocalDate.now());
+        attributionRecompense.setContexte("Attribuer au mérite par notre Gestionnaire : Big Boss");
+        attributionRecompense.setDateExpiration(LocalDate.now().plusDays(30));
         return ResponseEntity.ok(attributionRecompenseRepository.save(attributionRecompense));
     }
 }

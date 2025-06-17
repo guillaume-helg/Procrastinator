@@ -44,6 +44,9 @@ public class ProcrastinateurService {
     @Autowired
     private GestionnaireService gestionnaireService;
 
+    @Autowired
+    private ExcuseRepository excuseRepository;
+
     /**
      * Crée un procrastinateur s'il n'existe pas déjà via son ID utilisateur
      * Si trouvé, retourne l'existant ; sinon, initialise un nouveau procrastinateur
@@ -279,9 +282,18 @@ public class ProcrastinateurService {
     }
 
     public String eviterLePiege(Long idPiege) throws IllegalArgumentException {
-        piegeProductiviteRepository.findByIdPiegeProductivite(idPiege).stream().findFirst().orElseThrow(
+        PiegeProductivite piegeProductivite = piegeProductiviteRepository.findByIdPiegeProductivite(idPiege).stream().findFirst().orElseThrow(
                 () -> new IllegalArgumentException("Id piege inexistant")
         );
+
+        if (piegeProductivite.getStatut() != Statut.ACTIF) {
+            throw new IllegalArgumentException("Piege non actif !");
+        }
+
+        piegeProductivite.setStatut(Statut.INACTIF);
+        piegeProductivite.setIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
+
+        piegeProductiviteRepository.save(piegeProductivite);
 
         Procrastinateur procrastinateur = procrastinateurRepository.findProcrastinateurByMail(utilisateurCourant.getUtilisateurConnecte().getMail()).stream().findFirst().orElseThrow();
         procrastinateur.setPointsAccumules(procrastinateur.getPointsAccumules() + 50);
@@ -302,5 +314,23 @@ public class ProcrastinateurService {
         procrastinateurRepository.save(procrastinateur);
 
         return "Tu es tombé dans un piège";
+    }
+
+    public ResponseEntity<?> validerExcuse(Long idExcuse) {
+        Excuse excuse = excuseRepository.findExcuseByIdExcuse(idExcuse).stream().findFirst().orElseThrow(
+                () -> new IllegalArgumentException("Id excuse inexistant")
+        );
+        excuse.setStatut(StatutExcuse.APPROUVEE);
+
+        return new ResponseEntity<>(excuseRepository.save(excuse), HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<?> rejeterExcuse(Long idExcuse) {
+        Excuse excuse = excuseRepository.findExcuseByIdExcuse(idExcuse).stream().findFirst().orElseThrow(
+                () -> new IllegalArgumentException("Id excuse inexistant")
+        );
+        excuse.setStatut(StatutExcuse.REJETEE);
+
+        return new ResponseEntity<>(excuseRepository.save(excuse), HttpStatus.CREATED);
     }
 }

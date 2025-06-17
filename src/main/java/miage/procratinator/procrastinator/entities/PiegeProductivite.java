@@ -25,11 +25,10 @@ public class PiegeProductivite {
     private Type type;
     private Long idAntiProcrastinateur;
     private NiveauProcrastination niveauProcrastination;
-    @ManyToOne
-    @JoinColumn(name = "idRecompense")
-    private Recompense recompense;
+    private Long recompense;
     private LocalDate dateCreation;
     private Statut statut;
+    private Long idProcrastinateur; // procrastinateur ayant esquivé le piège
 }
 
 
