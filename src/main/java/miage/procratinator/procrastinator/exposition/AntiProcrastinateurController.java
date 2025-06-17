@@ -31,12 +31,12 @@ public class AntiProcrastinateurController {
     /**
      * Récupère une analyse des pièges de productivité associés à un utilisateur spécifique.
      *
-     * @param id l'identifiant de l'utilisateur pour lequel l'analyse doit être effectuée
+     * @param idProcrastinateur l'identifiant de l'utilisateur pour lequel l'analyse doit être effectuée
      * @return une ResponseEntity contenant l'analyse des pièges de productivité de l'utilisateur,
      * ou un message approprié si aucun piège n'est associé à l'utilisateur
      */
-    @GetMapping("/analyse/{id}")
-    public ResponseEntity<?> getAnalyse(@PathVariable Long id) {
-        return new ResponseEntity<>(antiProcrastinateurService.getAnalyse(id), HttpStatus.CREATED);
+    @GetMapping("/analyse/{idProcrastinateur}")
+    public ResponseEntity<?> getAnalyse(@PathVariable Long idProcrastinateur) {
+        return new ResponseEntity<>(antiProcrastinateurService.getAnalyse(idProcrastinateur), HttpStatus.CREATED);
     }
 }

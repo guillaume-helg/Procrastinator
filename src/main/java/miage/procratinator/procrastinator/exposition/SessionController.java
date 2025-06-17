@@ -33,7 +33,7 @@ public class SessionController {
                 .findFirst()
                 .map(utilisateur -> {
                     session.setAttribute("utilisateur", utilisateur);
-                    return ResponseEntity.ok("" + utilisateur);
+                    return ResponseEntity.ok("Connexion de : " + utilisateur.getPseudo());
                 })
                 .orElseThrow(
                         () -> new IllegalArgumentException("L'utilisateur avec l'adresse email " + email + " n'existe pas")

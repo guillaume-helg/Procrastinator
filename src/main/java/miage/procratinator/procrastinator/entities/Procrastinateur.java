@@ -19,8 +19,6 @@ public class Procrastinateur extends Utilisateur {
 
     private int pointsAccumules;
 
-    @ManyToOne
-    @JoinColumn(name = "idExcuse")
-    private Excuse excusePreferee;
+    private String excusePreferee;
 }
 

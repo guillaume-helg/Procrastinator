@@ -115,11 +115,13 @@ public class ProcrastinateurService {
         } else if (nouveauStatut == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Une tâche ne peut être nulle");
         } else if (nouveauStatut.equals(StatutTache.EVITEE_AVEC_SUCCES)) {
+            tacheAEviter.setStatut(nouveauStatut);
+            tachesAEviterRepository.save(tacheAEviter);
             return tacheEviteeAvecSucces(tacheAEviter);
         }
 
         tacheAEviter.setStatut(nouveauStatut);
-        tacheAEviter = tachesAEviterRepository.save(tacheAEviter);
+        tachesAEviterRepository.save(tacheAEviter);
 
         return ResponseEntity.status(HttpStatus.OK).body("Tâche modifiée !");
     }
