@@ -2,6 +2,7 @@ package miage.procratinator.procrastinator.exposition;
 
 import jakarta.servlet.http.HttpSession;
 import miage.procratinator.procrastinator.entities.Procrastinateur;
+import miage.procratinator.procrastinator.entities.Recompense;
 import miage.procratinator.procrastinator.entities.TacheAEviter;
 import miage.procratinator.procrastinator.metier.ProcrastinateurService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +70,10 @@ public class ProcrastinateurController {
     @PostMapping("/rejeterExcuse/{id}")
     public ResponseEntity<?> rejeterExcuse(@PathVariable Long id) {
         return new ResponseEntity<>(procrastinateurService.rejeterExcuse(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/recompenses")
+    public ResponseEntity<?> getRecompensesProcrastinateur() {
+        return procrastinateurService.getRecompensesUtilisateur();
     }
 }

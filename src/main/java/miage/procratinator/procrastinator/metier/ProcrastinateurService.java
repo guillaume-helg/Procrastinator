@@ -333,4 +333,9 @@ public class ProcrastinateurService {
 
         return new ResponseEntity<>(excuseRepository.save(excuse), HttpStatus.CREATED);
     }
+
+    public ResponseEntity<?> getRecompensesUtilisateur() {
+        List<AttributionRecompense> attributionRecompense = attributionRecompenseRepository.findAttributionRecompensesByIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
+        return new ResponseEntity<>(attributionRecompense, HttpStatus.OK);
+    }
 }

@@ -51,9 +51,7 @@ public class VoteExcuseService {
     }
 
     public List<Excuse> classement() {
-        return excuseRepository.findAll().stream()
-            .sorted((e1, e2) -> Integer.compare(e2.getVotesRecus(), e1.getVotesRecus()))
-            .toList();
+        return excuseRepository.findAllByOrderByVotesRecusDesc();
     }
 
     public ResponseEntity<?> updateVoteExcuse(Long idExcuse) {
@@ -77,7 +75,9 @@ public class VoteExcuseService {
                                     LocalDate.now()));
                     return ResponseEntity.ok("+1 vote");
                 })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Excuse non trouvée"));
+                .orElseThrow(
+                        () -> new IllegalArgumentException("L'excuse n'existe pas")
+                );
     }
 
     private boolean utilisateurDejaVoter(Long idUtilisateur, Long idExcuse) {

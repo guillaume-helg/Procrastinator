@@ -106,7 +106,7 @@ public class GestionnaireService {
         }
 
         return grandConcoursRepository
-                .findGrandConcourByIdGrandConcour(grandConcour.getIdGrandConcour())
+                .findGrandConcourByIdGrandConcours(grandConcour.getIdGrandConcours())
                 .stream()
                 .findFirst()
                 .orElseGet(() -> {

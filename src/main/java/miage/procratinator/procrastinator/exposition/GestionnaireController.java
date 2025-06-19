@@ -15,7 +15,7 @@ public class GestionnaireController {
     private GestionnaireService gestionnaireService;
 
     @PostMapping("/antiprocrastinateurs")
-    public ResponseEntity<AntiProcrastinateur> inscrireAntiprocrastinateur(@RequestBody AntiProcrastinateur antiProcrastinateur) {
+    public ResponseEntity<AntiProcrastinateur> creerAntiprocrastinateur(@RequestBody AntiProcrastinateur antiProcrastinateur) {
         if (antiProcrastinateur == null || antiProcrastinateur.getPseudo().isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         AntiProcrastinateur createdAntiprocrastinateur = gestionnaireService.creerAntiProcrastinateur(antiProcrastinateur);

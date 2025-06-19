@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface AttributionRecompenseRepository extends CrudRepository<AttributionRecompense, Long> {
-    List<AttributionRecompense> findAttributionRecompenseByIdAttributionRecompense(Long idAttributionRecompense);
+    List<AttributionRecompense> findAttributionRecompensesByIdProcrastinateur(Long idProcrastinateur);
 }

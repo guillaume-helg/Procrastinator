@@ -35,8 +35,9 @@ public class SessionController {
                     session.setAttribute("utilisateur", utilisateur);
                     return ResponseEntity.ok("" + utilisateur);
                 })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Email inconnu"));
+                .orElseThrow(
+                        () -> new IllegalArgumentException("L'utilisateur avec l'adresse email " + email + " n'existe pas")
+                );
     }
 
     /**
