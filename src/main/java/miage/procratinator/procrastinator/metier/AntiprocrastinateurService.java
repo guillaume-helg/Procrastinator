@@ -75,6 +75,6 @@ public class AntiprocrastinateurService {
         long piegesActifs = piegeProductiviteRepository.countByIdProcrastinateurAndStatut(idUtilisateur, Statut.ACTIF);
         long piegesInactifs = piegeProductiviteRepository.countByIdProcrastinateurAndStatut(idUtilisateur, Statut.INACTIF);
 
-        return ResponseEntity.ok("Total pièges : " + totalPieges + ", Pièges actifs : " + piegesActifs + "Piegs inactifs : " + piegesInactifs);
+        return ResponseEntity.ok("Total pièges : " + totalPieges + "; Pièges actifs : " + piegesActifs + "; Pieges inactifs : " + piegesInactifs);
     }
 }
