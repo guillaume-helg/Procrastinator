@@ -26,7 +26,7 @@ public class ProcrastinateurController {
      * @return un ResponseEntity contenant l'objet Procrastinateur créé, accompagné du statut HTTP CREATED
      */
     @PostMapping("/inscrire")
-    public ResponseEntity<Procrastinateur> createProcrastinateur(@RequestBody Procrastinateur procrastinateur) {
+    public ResponseEntity<Procrastinateur> creerProcrastinateur(@RequestBody Procrastinateur procrastinateur) {
         Procrastinateur savedProcrastinateur = procrastinateurService.createProcrastinateur(procrastinateur);
         return new ResponseEntity<>(savedProcrastinateur, HttpStatus.CREATED);
     }

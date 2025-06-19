@@ -32,10 +32,6 @@ public class SessionController {
             throw new IllegalArgumentException("Email pas valide : " + email);
         }
 
-        if (session.getAttribute("utilisateur") != null) {
-            throw new IllegalArgumentException("Un utilisateur est deja connecté");
-        }
-
         return utilisateurRepository.findUtilisateurByMail(email)
                 .stream()
                 .findFirst()
@@ -49,18 +45,6 @@ public class SessionController {
     }
 
     /**
-     * Déconnecte l'utilisateur courant en invalidant sa session HTTP.
-     *
-     * @param session l'objet HttpSession représentant la session de l'utilisateur à invalider
-     * @return un ResponseEntity contenant un message de succès après la déconnexion
-     */
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok("Déconnexion réussie");
-    }
-
-    /**
      * Récupère l'utilisateur actuel de la session si disponible.
      * Si l'utilisateur n'est pas authentifié, retourne une réponse non autorisée.
      *
@@ -68,7 +52,7 @@ public class SessionController {
      * @return un ResponseEntity contenant l'utilisateur authentifié si présent, ou un message non autorisé si non authentifié
      */
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser(@SessionAttribute(value = "utilisateur", required = false) Utilisateur utilisateur) {
+    public ResponseEntity<?> getUtilisateurCourant(@SessionAttribute(value = "utilisateur", required = false) Utilisateur utilisateur) {
         if (utilisateur == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Non connecté");
         }
