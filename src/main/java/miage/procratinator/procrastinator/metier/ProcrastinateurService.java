@@ -402,8 +402,8 @@ public class ProcrastinateurService {
 
         List<ParticipationGrandConcours> participations = participationGrandConcoursRepository.findParticipationDefiByIdGrandConcours(id);
 
-        if (grandConcours.getDateDebut().isBefore(LocalDate.now()) && grandConcours.getDateFin().isAfter(LocalDate.now())) {
-            return ResponseEntity.badRequest().body("Le défi n'est pas actif");
+        if (grandConcours.getDateDebut().isAfter(LocalDate.now()) && grandConcours.getDateFin().isBefore(LocalDate.now())) {
+            return ResponseEntity.badRequest().body("Le grand concours n'est pas actif");
         }
 
         Long userId = utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur();
@@ -411,7 +411,7 @@ public class ProcrastinateurService {
                 .anyMatch(participation -> participation.getIdProcrastinateur().equals(userId));
 
         if (alreadyParticipating) {
-            return ResponseEntity.badRequest().body("Déjà inscrit au défi");
+            return ResponseEntity.badRequest().body("Déjà inscrit au concours");
         }
 
         ParticipationGrandConcours newParticipation = new ParticipationGrandConcours();

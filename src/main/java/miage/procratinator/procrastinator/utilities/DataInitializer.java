@@ -2,10 +2,6 @@ package miage.procratinator.procrastinator.utilities;
 
 import miage.procratinator.procrastinator.dao.RecompenseRepository;
 import miage.procratinator.procrastinator.dao.UtilisateurRepository;
-<<<<<<< Updated upstream
-import miage.procratinator.procrastinator.entities.Excuse;
-=======
->>>>>>> Stashed changes
 import miage.procratinator.procrastinator.entities.Procrastinateur;
 import miage.procratinator.procrastinator.entities.Recompense;
 import miage.procratinator.procrastinator.entities.Utilisateur;
@@ -59,12 +55,8 @@ public class DataInitializer {
                 veteran.setPseudo("Véteran Brian");
                 veteran.setMail(email);
                 veteran.setNiveauProcrastination(NiveauProcrastination.INTERMEDIAIRE);
-<<<<<<< Updated upstream
                 veteran.setPointsAccumules(4950);
                 veteran.setExcusePreferee("Je peux pas j'ai acqua poney");
-=======
-                veteran.setPointsAccumules(4850);
->>>>>>> Stashed changes
                 veteran.setDateInscription(LocalDate.now().minusMonths(8));
                 utilisateurRepository.save(veteran);
                 System.out.println("Creation du Veteran");
