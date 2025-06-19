@@ -106,7 +106,7 @@ public class GestionnaireService {
         }
 
         return grandConcoursRepository
-                .findGrandConcourByIdGrandConcour(grandConcour.getIdGrandConcour())
+                .findGrandConcourByIdGrandConcours(grandConcour.getIdGrandConcours())
                 .stream()
                 .findFirst()
                 .orElseGet(() -> {
@@ -116,6 +116,15 @@ public class GestionnaireService {
                 });
     }
 
+    /**
+     * Crée ou récupère une récompense.
+     * Cette méthode suit un modèle "trouver ou créer" pour gérer les entités de type Recompense.
+     * Si une récompense avec le même ID existe, elle est retournée. Sinon, une nouvelle récompense est créée avec les informations fournies.
+     *
+     * @param recompense L'entité contenant les informations de la récompense à créer ou récupérer
+     * @return Recompense L'entité existante ou nouvellement créée
+     * @throws IllegalArgumentException si recompense est null
+     */
     public Recompense creerRecompense(Recompense recompense) {
         if (recompense == null) {
             throw new IllegalArgumentException("Le grand concours ne peut pas être null");
@@ -131,6 +140,16 @@ public class GestionnaireService {
                 });
     }
 
+    /**
+     * Attribue une récompense à un procrastinateur donné. La récompense est marquée comme active
+     * et une durée d'expiration de 30 jours est définie. Cette opération génère un nouveau
+     * lien entre la récompense et le procrastinateur.
+     *
+     * @param idRecompense l'identifiant de la récompense à attribuer
+     * @param idProcrastinateur l'identifiant du procrastinateur à qui la récompense sera attribuée
+     * @return une réponse encapsulant l'entité {@link AttributionRecompense} nouvellement créée et sauvegardée
+     * @throws IllegalArgumentException si idRecompense ou idProcrastinateur est null
+     */
     public ResponseEntity<AttributionRecompense> attribuerRecompense(Long idRecompense, Long idProcrastinateur) {
         if (idRecompense == null) {
             throw new IllegalArgumentException("idRecompense ne peut pas être null");

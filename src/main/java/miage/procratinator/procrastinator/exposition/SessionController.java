@@ -28,6 +28,14 @@ public class SessionController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String email, HttpSession session) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email pas valide : " + email);
+        }
+
+        if (session.getAttribute("utilisateur") != null) {
+            throw new IllegalArgumentException("Un utilisateur est deja connecté");
+        }
+
         return utilisateurRepository.findUtilisateurByMail(email)
                 .stream()
                 .findFirst()
@@ -35,8 +43,9 @@ public class SessionController {
                     session.setAttribute("utilisateur", utilisateur);
                     return ResponseEntity.ok("" + utilisateur);
                 })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Email inconnu"));
+                .orElseThrow(
+                        () -> new IllegalArgumentException("L'utilisateur avec l'adresse email " + email + " n'existe pas")
+                );
     }
 
     /**

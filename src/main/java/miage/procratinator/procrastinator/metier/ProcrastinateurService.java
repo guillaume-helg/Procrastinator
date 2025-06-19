@@ -257,6 +257,16 @@ public class ProcrastinateurService {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedParticipation);
     }
 
+    /**
+     * Valide un défi pour l'utilisateur courant, met à jour les entités concernées,
+     * et récompense l'utilisateur avec des points lors de la réussite du défi.
+     *
+     * @param idDefi l'identifiant du défi à valider
+     * @return un ResponseEntity contenant le statut de l'opération et
+     * les informations sur la completion du défi et les points gagnés
+     * @throws IllegalArgumentException si le défi ou les détails de participation
+     *                                  correspondant à l'idDefi n'existent pas
+     */
     public ResponseEntity<?> validerDefi(Long idDefi) {
         Procrastinateur procrastinateur = (Procrastinateur) utilisateurCourant.getUtilisateurConnecte();
 
@@ -281,6 +291,14 @@ public class ProcrastinateurService {
                 .body("Défi valider !!! "+ defi.getPointsAGagner() + " points !" + checkNiveauProcrastinateur(procrastinateur));
     }
 
+    /**
+     * Désactive un piège de productivité en modifiant son statut, attribue les points correspondants 
+     * à l'utilisateur connecté et vérifie le niveau de ce dernier.
+     *
+     * @param idPiege l'identifiant unique du piège de productivité à désactiver
+     * @return un message confirmant que le piège a été évité avec succès
+     * @throws IllegalArgumentException si l'identifiant du piège est invalide ou si le piège n'est pas actif
+     */
     public String eviterLePiege(Long idPiege) throws IllegalArgumentException {
         PiegeProductivite piegeProductivite = piegeProductiviteRepository.findByIdPiegeProductivite(idPiege).stream().findFirst().orElseThrow(
                 () -> new IllegalArgumentException("Id piege inexistant")
@@ -302,6 +320,14 @@ public class ProcrastinateurService {
         return "Piège évité avec succès";
     }
 
+    /**
+     * Gère le cas où un utilisateur tombe dans un "piège" en réduisant ses points accumulés
+     * et déclenche les mises à jour appropriées comme l'attribution de récompenses et la vérification du niveau.
+     *
+     * @param idPiege L'identifiant unique du piège à vérifier et traiter.
+     * @return Un message indiquant que l'utilisateur est tombé dans un piège.
+     * @throws IllegalArgumentException si le piège avec l'id fourni n'existe pas.
+     */
     public String tomberDansPiege(Long idPiege) {
         piegeProductiviteRepository.findByIdPiegeProductivite(idPiege).stream().findFirst().orElseThrow(
                 () -> new IllegalArgumentException("Id piege inexistant")
@@ -316,6 +342,13 @@ public class ProcrastinateurService {
         return "Tu es tombé dans un piège";
     }
 
+    /**
+     * Valide une excuse en mettant à jour son statut à "APPROUVEE".
+     *
+     * @param idExcuse l'identifiant de l'excuse à valider
+     * @return une ResponseEntity contenant l'excuse mise à jour et un statut HTTP CREATED
+     * @throws IllegalArgumentException si aucune excuse n'est trouvée avec l'identifiant fourni
+     */
     public ResponseEntity<?> validerExcuse(Long idExcuse) {
         Excuse excuse = excuseRepository.findExcuseByIdExcuse(idExcuse).stream().findFirst().orElseThrow(
                 () -> new IllegalArgumentException("Id excuse inexistant")
@@ -325,6 +358,12 @@ public class ProcrastinateurService {
         return new ResponseEntity<>(excuseRepository.save(excuse), HttpStatus.CREATED);
     }
 
+    /**
+     * Rejette une excuse en mettant à jour son statut à "REJETEE" et sauvegarde les modifications dans le dépôt.
+     *
+     * @param idExcuse l'identifiant unique de l'excuse à rejeter
+     * @return une ResponseEntity contenant l'objet excuse mis à jour et un statut HTTP CREATED
+     */
     public ResponseEntity<?> rejeterExcuse(Long idExcuse) {
         Excuse excuse = excuseRepository.findExcuseByIdExcuse(idExcuse).stream().findFirst().orElseThrow(
                 () -> new IllegalArgumentException("Id excuse inexistant")
@@ -332,5 +371,15 @@ public class ProcrastinateurService {
         excuse.setStatut(StatutExcuse.REJETEE);
 
         return new ResponseEntity<>(excuseRepository.save(excuse), HttpStatus.CREATED);
+    }
+
+    /**
+     * Récupère la liste des attributions de récompenses pour l'utilisateur actuellement connecté.
+     *
+     * @return ResponseEntity contenant la liste des objets AttributionRecompense associés à l'utilisateur actuel, avec un statut HTTP OK.
+     */
+    public ResponseEntity<?> getRecompensesUtilisateur() {
+        List<AttributionRecompense> attributionRecompense = attributionRecompenseRepository.findAttributionRecompensesByIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
+        return new ResponseEntity<>(attributionRecompense, HttpStatus.OK);
     }
 }

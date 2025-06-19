@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface GrandConcoursRepository extends CrudRepository<GrandConcours, Integer> {
-    List<GrandConcours> findGrandConcourByIdGrandConcour(Long idGrandConcour);
+    List<GrandConcours> findGrandConcourByIdGrandConcours(Long idGrandConcour);
 }

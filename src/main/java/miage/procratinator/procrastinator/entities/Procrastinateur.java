@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import miage.procratinator.procrastinator.entities.enumeration.NiveauProcrastination;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
 @Setter

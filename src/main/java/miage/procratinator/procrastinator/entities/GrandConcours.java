@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class GrandConcours {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idGrandConcour;
+    private Long idGrandConcours;
     private String nom;
     private LocalDate dateDebut;
     private LocalDate dateFin;
