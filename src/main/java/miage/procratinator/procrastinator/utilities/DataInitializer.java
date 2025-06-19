@@ -56,7 +56,7 @@ public class DataInitializer {
                 veteran.setPseudo("Véteran Brian");
                 veteran.setMail(email);
                 veteran.setNiveauProcrastination(NiveauProcrastination.INTERMEDIAIRE);
-                veteran.setPointsAccumules(4850);
+                veteran.setPointsAccumules(4950);
                 veteran.setExcusePreferee("Je peux pas j'ai acqua poney");
                 veteran.setDateInscription(LocalDate.now().minusMonths(8));
                 utilisateurRepository.save(veteran);
