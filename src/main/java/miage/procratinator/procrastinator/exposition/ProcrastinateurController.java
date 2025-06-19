@@ -157,8 +157,29 @@ public class ProcrastinateurController {
         return procrastinateurService.getRecompensesUtilisateur();
     }
 
+    /**
+     * Permet au procrastinateur actuel de participer à un "grand concours"
+     * identifié par son identifiant. Cette action peut influencer
+     * les données ou statistiques liées au compte utilisateur.
+     *
+     * @param id l'identifiant du grand concours auquel participer
+     * @return un ResponseEntity contenant le résultat de la participation,
+     *         accompagné d'un statut HTTP approprié
+     */
     @PostMapping("/participer/grandconcours/{id}")
     public ResponseEntity<?> participerGrandConcours(@PathVariable Long id) {
         return procrastinateurService.participerGrandConcours(id);
+    }
+
+    /**
+     * Définit une nouvelle excuse pour le procrastinateur actuel.
+     *
+     * @param excuse la chaîne de caractères représentant l'excuse à enregistrer
+     * @return un ResponseEntity indiquant le résultat de l'opération,
+     *         accompagné d'un statut HTTP approprié
+     */
+    @PostMapping("/setExcuse")
+    public ResponseEntity<?> setExcuse(@RequestBody String excuse) {
+        return procrastinateurService.setExcuse(excuse);
     }
 }

@@ -391,6 +391,16 @@ public class ProcrastinateurService {
         return new ResponseEntity<>(attributionRecompense, HttpStatus.OK);
     }
 
+    /**
+     * Permet à un utilisateur de participer à un Grand Concours spécifique identifié par l'ID fourni
+     * si l'utilisateur est éligible et n'est pas déjà inscrit.
+     *
+     * @param id L'identifiant du Grand Concours auquel l'utilisateur souhaite participer.
+     * @return Une ResponseEntity contenant :
+     * - Statut 201 (Created) et l'objet ParticipationGrandConcours créé si l'opération réussit.
+     * - Statut 400 (Bad Request) avec un message approprié si la requête est invalide ou si l'utilisateur participe déjà.
+     * - Statut 401 (Unauthorized) si l'utilisateur n'est pas authentifié.
+     */
     public ResponseEntity<?> participerGrandConcours(Long id) {
         GrandConcours grandConcours = grandConcoursRepository.findGrandConcourByIdGrandConcours(id).stream().findFirst().orElseThrow(
                 () -> new IllegalArgumentException("Id grand concours inexistant")
@@ -422,5 +432,18 @@ public class ProcrastinateurService {
 
         ParticipationGrandConcours savedParticipation = participationGrandConcoursRepository.save(newParticipation);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedParticipation);
+    }
+
+    /**
+     * Définit l'excuse préférée pour l'utilisateur actuellement connecté et persiste le changement.
+     *
+     * @param excuse l'excuse à définir comme excuse préférée pour l'utilisateur
+     * @return une ResponseEntity contenant l'excuse fournie et un statut HTTP CREATED
+     */
+    public ResponseEntity<?> setExcuse(String excuse) {
+        Procrastinateur procrastinateur = procrastinateurRepository.findProcrastinateurByMail(utilisateurCourant.getUtilisateurConnecte().getMail()).stream().findFirst().orElseThrow();
+        procrastinateur.setExcusePreferee(excuse);
+        procrastinateurRepository.save(procrastinateur);
+        return ResponseEntity.status(HttpStatus.CREATED).body(excuse);
     }
 }
