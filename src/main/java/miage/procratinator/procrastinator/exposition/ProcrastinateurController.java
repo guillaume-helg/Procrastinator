@@ -156,4 +156,9 @@ public class ProcrastinateurController {
     public ResponseEntity<?> getRecompensesProcrastinateur() {
         return procrastinateurService.getRecompensesUtilisateur();
     }
+
+    @PostMapping("/participer/grandconcours/{id}")
+    public ResponseEntity<?> participerGrandConcours(@PathVariable Long id) {
+        return procrastinateurService.participerGrandConcours(id);
+    }
 }

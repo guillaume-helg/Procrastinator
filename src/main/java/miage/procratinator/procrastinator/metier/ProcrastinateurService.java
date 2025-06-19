@@ -47,6 +47,12 @@ public class ProcrastinateurService {
     @Autowired
     private ExcuseRepository excuseRepository;
 
+    @Autowired
+    private GrandConcoursRepository grandConcoursRepository;
+
+    @Autowired
+    private ParticipationGrandConcoursRepository participationGrandConcoursRepository;
+
     /**
      * Crée un procrastinateur s'il n'existe pas déjà via son ID utilisateur
      * Si trouvé, retourne l'existant ; sinon, initialise un nouveau procrastinateur
@@ -383,5 +389,38 @@ public class ProcrastinateurService {
     public ResponseEntity<?> getRecompensesUtilisateur() {
         List<AttributionRecompense> attributionRecompense = attributionRecompenseRepository.findAttributionRecompensesByIdProcrastinateur(utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur());
         return new ResponseEntity<>(attributionRecompense, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> participerGrandConcours(Long id) {
+        GrandConcours grandConcours = grandConcoursRepository.findGrandConcourByIdGrandConcours(id).stream().findFirst().orElseThrow(
+                () -> new IllegalArgumentException("Id grand concours inexistant")
+        );
+
+        if (utilisateurCourant == null || utilisateurCourant.getUtilisateurConnecte() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur non connecté");
+        }
+
+        List<ParticipationGrandConcours> participations = participationGrandConcoursRepository.findParticipationDefiByIdGrandConcours(id);
+
+        if (grandConcours.getDateDebut().isBefore(LocalDate.now()) && grandConcours.getDateFin().isAfter(LocalDate.now())) {
+            return ResponseEntity.badRequest().body("Le défi n'est pas actif");
+        }
+
+        Long userId = utilisateurCourant.getUtilisateurConnecte().getIdUtilisateur();
+        boolean alreadyParticipating = participations.stream()
+                .anyMatch(participation -> participation.getIdProcrastinateur().equals(userId));
+
+        if (alreadyParticipating) {
+            return ResponseEntity.badRequest().body("Déjà inscrit au défi");
+        }
+
+        ParticipationGrandConcours newParticipation = new ParticipationGrandConcours();
+        newParticipation.setIdProcrastinateur(userId);
+        newParticipation.setDateInscription(LocalDate.now());
+        newParticipation.setIdGrandConcours(grandConcours.getIdGrandConcours());
+        newParticipation.setStatutParticipationGrandConcours(StatutParticipationDefi.INSCRIT);
+
+        ParticipationGrandConcours savedParticipation = participationGrandConcoursRepository.save(newParticipation);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedParticipation);
     }
 }
