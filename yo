@@ -1,0 +1,392 @@
+// app.component.ts
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule} from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
+
+interface User {
+  id: number;
+  name: string;
+  avatar?: string;
+}
+
+interface Role {
+  id: number;
+  name: string;
+  color: string;
+}
+
+interface ProjectMember {
+  user: User;
+  role: Role;
+}
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatAutocompleteModule,
+    MatBadgeModule,
+    FormsModule
+  ],
+  template: `
+    <div class="container">
+      <div class="header">
+        <h2>Nouveau projet</h2>
+        <span class="member-count" [matBadge]="projectMembers.length" matBadgeColor="accent">
+          <mat-icon>people</mat-icon>
+        </span>
+      </div>
+
+      <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Nom du projet</mat-label>
+            <input matInput formControlName="projectName" placeholder="Ex: Refonte site web">
+            <mat-icon matPrefix>folder</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Budget</mat-label>
+            <input matInput type="number" formControlName="budget" placeholder="50000">
+            <mat-icon matPrefix>euro</mat-icon>
+            <span matSuffix>€</span>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="2"
+                    placeholder="Décrivez brièvement le projet..."></textarea>
+          <mat-icon matPrefix>description</mat-icon>
+        </mat-form-field>
+
+        <!-- Section membres ultra-compacte -->
+        <div class="members-compact">
+          <div class="inline-add">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Ajouter un membre</mat-label>
+              <mat-icon matPrefix>person_add</mat-icon>
+              <mat-select [(ngModel)]="selectedUser" [ngModelOptions]="{standalone: true}"
+                          (selectionChange)="onUserSelected()">
+                <mat-option *ngFor="let user of getAvailableUsers()" [value]="user">
+                  <div class="user-option">
+                    <span>{{ user.name }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" *ngIf="selectedUser">
+              <mat-label>Rôle</mat-label>
+              <mat-select [(ngModel)]="selectedRole" [ngModelOptions]="{standalone: true}"
+                          (selectionChange)="addMemberAuto()">
+                <mat-option *ngFor="let role of availableRoles" [value]="role">
+                  {{ role.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Membres en chips inline -->
+          <div class="members-chips" *ngIf="projectMembers.length > 0">
+            <mat-chip-set>
+              <mat-chip *ngFor="let member of projectMembers"
+                        [removable]="true"
+                        (removed)="removeMember(member)"
+                        class="member-chip">
+                <span class="chip-content">
+                  <strong>{{ member.user.name }}</strong>
+                  <span class="chip-role" >{{ member.role.name }}</span>
+                </span>
+                <button matChipRemove>
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button mat-stroked-button type="button" (click)="cancel()">
+            Annuler
+          </button>
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="!projectForm.valid || projectMembers.length === 0">
+            <mat-icon>check</mat-icon>
+            Créer le projet
+          </button>
+        </div>
+      </form>
+    </div>
+  `,
+  styles: [`
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      margin: 0;
+      color: #333;
+      font-size: 28px;
+      font-weight: 500;
+    }
+
+    .member-count {
+      display: flex;
+      align-items: center;
+      color: #666;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .full-width {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .members-compact {
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      border: 2px dashed #667eea40;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+    }
+
+    .inline-add {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .inline-add mat-form-field {
+      flex: 1;
+    }
+
+    .user-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .role-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .members-chips {
+      margin-top: 8px;
+    }
+
+    .member-chip {
+      height: 48px !important;
+      padding: 4px 12px !important;
+      margin: 4px !important;
+    }
+
+    .chip-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+
+    .chip-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.2;
+    }
+
+    .chip-content strong {
+      font-size: 13px;
+      color: #333;
+    }
+
+    .chip-role {
+      font-size: 11px;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .inline-add {
+        flex-direction: column;
+      }
+    }
+
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+  `]
+})
+export class App {
+  projectForm: FormGroup;
+  projectMembers: ProjectMember[] = [];
+  selectedUser: User | null = null;
+  selectedRole: Role | null = null;
+
+  availableUsers: User[] = [
+    { id: 1, name: 'Alice Dupont' },
+    { id: 2, name: 'Bob Martin' },
+    { id: 3, name: 'Claire Bernard' },
+    { id: 4, name: 'David Leroux' },
+    { id: 5, name: 'Emma Rousseau' },
+    { id: 6, name: 'François Dubois' },
+    { id: 7, name: 'Sophie Laurent' },
+    { id: 8, name: 'Marc Petit' }
+  ];
+
+  availableRoles: Role[] = [
+    { id: 1, name: 'Développeur', color: '#2196F3' },
+    { id: 2, name: 'Designer', color: '#E91E63' },
+    { id: 3, name: 'Chef de projet', color: '#FF9800' },
+    { id: 4, name: 'Testeur', color: '#4CAF50' },
+    { id: 5, name: 'Product Owner', color: '#9C27B0' }
+  ];
+
+  constructor(
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar
+  ) {
+    this.projectForm = this.fb.group({
+      projectName: ['', Validators.required],
+      budget: [''],
+      description: ['']
+    });
+  }
+
+  getAvailableUsers(): User[] {
+    const addedUserIds = this.projectMembers.map(m => m.user.id);
+    return this.availableUsers.filter(u => !addedUserIds.includes(u.id));
+  }
+
+  onUserSelected(): void {
+    // Le champ rôle apparaît automatiquement
+  }
+
+  addMemberAuto(): void {
+    if (this.selectedUser && this.selectedRole) {
+      this.projectMembers.push({
+        user: { ...this.selectedUser },
+        role: { ...this.selectedRole }
+      });
+
+      this.selectedUser = null;
+      this.selectedRole = null;
+
+      this.snackBar.open('✓ Membre ajouté', '', {
+        duration: 1500,
+        horizontalPosition: 'end',
+        verticalPosition: 'top',
+        panelClass: ['success-snack']
+      });
+    }
+  }
+
+  removeMember(member: ProjectMember): void {
+    const index = this.projectMembers.indexOf(member);
+    if (index >= 0) {
+      this.projectMembers.splice(index, 1);
+    }
+  }
+
+  onSubmit(): void {
+    if (this.projectForm.valid && this.projectMembers.length > 0) {
+      const projectData = {
+        ...this.projectForm.value,
+        members: this.projectMembers
+      };
+
+      console.log('Données du projet:', projectData);
+
+      this.snackBar.open('🎉 Projet créé avec succès !', 'OK', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom'
+      });
+
+      this.projectForm.reset();
+      this.projectMembers = [];
+    }
+  }
+
+  cancel(): void {
+    this.projectForm.reset();
+    this.projectMembers = [];
+    this.selectedUser = null;
+    this.selectedRole = null;
+  }
+}
